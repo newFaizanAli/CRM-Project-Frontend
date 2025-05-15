@@ -28,7 +28,7 @@ const StockEntryForm = ({ stockentry, onClose }: StockEntryFormProps) => {
     defaultValues: {
       product: "",
       warehouse: "",
-      entryType: "Purchase",
+      entryType: "Opening Stock",
       remarks: "",
       entryDate: "",
       quantity: 1,

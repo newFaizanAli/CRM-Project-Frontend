@@ -16,6 +16,7 @@
     "@tanstack/react-table": "^8.21.3",
     "@types/node": "^22.14.1",
     "axios": "^1.8.4",
+    "lucide-react": "^0.510.0",
     "react": "^19.0.0",
     "react-dom": "^19.0.0",
     "react-hook-form": "^7.56.1",

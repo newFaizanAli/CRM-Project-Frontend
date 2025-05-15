@@ -93,6 +93,7 @@ export interface StockEntry {
   total: number;
   warehouse?: string | { _id: string; name: string } | null;
   product?: string | { _id: string; name: string } | null;
+  ID?: string;
 }
 
 // Form data without _id and ID
@@ -101,4 +102,15 @@ export type StockEntryFormData = Omit<StockEntry, "_id" | "ID">;
 // Form values when editing
 export type StockEntryFormWithId = StockEntryFormData & { _id: number };
 
+export interface StockLedger {
+  _id?: number;
+  entryType: string;
+  balance: number;
+  date: string;
+  quantity: number;
+  direction: string;
+  entryRefId?: { _id: string; ID: string } | string | null;
+  warehouse?: string | { _id: string; name: string } | null;
+  product?: string | { _id: string; name: string } | null;
+}
 

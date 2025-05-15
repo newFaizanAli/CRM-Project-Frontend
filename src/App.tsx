@@ -1,27 +1,34 @@
-import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom';
-import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
-import Layout from './components/Layout';
-import ProtectedRoute from './components/ProtectedRoute';
-import Login from './pages/Login';
-import Signup from './pages/Signup';
-import Dashboard from './pages/Dashboard';
-import Contacts from './pages/Contacts';
-import Leads from './pages/Leads';
-import Deals from './pages/Deals';
-import Tasks from './pages/Tasks';
-import Calendar from './pages/Calendar';
-import Reports from './pages/Reports';
-import Projects from './pages/Projects';
-import Settings from './pages/Settings';
-import Employees from './pages/Employees';
-import Activities from './pages/Activities';
-import Profile from './pages/Profile';
-import Category from './pages/Category'
-import Product from './pages/Products'
-import Warehouses from './pages/Warehouses';
-import StockEntryPage from './pages/StockEntry';
-import ToastProvider from './components/ToastProvider';
-
+import {
+  BrowserRouter as Router,
+  Routes,
+  Route,
+  Navigate,
+} from "react-router-dom";
+import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
+import Layout from "./components/Layout";
+import ProtectedRoute from "./components/ProtectedRoute";
+import Login from "./pages/Login";
+import Signup from "./pages/Signup";
+import Dashboard from "./pages/Dashboard";
+import Contacts from "./pages/Contacts";
+import Leads from "./pages/Leads";
+import Deals from "./pages/Deals";
+import Tasks from "./pages/Tasks";
+import Calendar from "./pages/Calendar";
+import Reports from "./pages/Reports";
+import Projects from "./pages/Projects";
+import Settings from "./pages/Settings";
+import Employees from "./pages/Employees";
+import Activities from "./pages/Activities";
+import Profile from "./pages/Profile";
+import Category from "./pages/Category";
+import Product from "./pages/Products";
+import Warehouses from "./pages/Warehouses";
+import StockEntryPage from "./pages/StockEntry";
+import StockLedger from "./pages/StockLedger";
+import ToastProvider from "./components/ToastProvider";
+import StockDashboard from "./pages/Dashboard/StockDashboard";
+import StockLayout from "./components/Layout/StockLayout";
 
 const queryClient = new QueryClient();
 
@@ -42,17 +49,23 @@ function App() {
               <Route path="/deals" element={<Deals />} />
               <Route path="/tasks" element={<Tasks />} />
               <Route path="/employees" element={<Employees />} />
-              <Route path="/categories" element={<Category />} />
-              <Route path="/products" element={<Product />} />
-              <Route path="/warehouses" element={<Warehouses />} />
-              <Route path="/stockentry" element={<StockEntryPage />} />
+              <Route path="/stock" element={<StockLayout />}>
+                <Route index element={<StockDashboard />} />
+                <Route path="categories" element={<Category />} />
+                <Route path="products" element={<Product />} />
+                <Route path="warehouses" element={<Warehouses />} />
+                <Route path="stockentry" element={<StockEntryPage />} />
+                <Route path="stockledger" element={<StockLedger />} />
+              </Route>
               <Route path="/calendar" element={<Calendar />} />
               <Route path="/reports" element={<Reports />} />
               <Route path="/projects" element={<Projects />} />
               <Route path="/settings" element={<Settings />} />
               <Route path="/profile" element={<Profile />} />
-              
-              <Route path="/activities" element={<Activities isDashboard={false} />} />
+              <Route
+                path="/activities"
+                element={<Activities isDashboard={false} />}
+              />
             </Route>
           </Route>
           <Route path="/" element={<Navigate to="/login" replace />} />

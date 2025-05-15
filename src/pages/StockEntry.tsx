@@ -14,6 +14,10 @@ import { StockEntry } from "../utilities/types";
 const columnHelper = createColumnHelper<StockEntry>();
 
 const columns: ColumnDef<StockEntry, any>[] = [
+  columnHelper.accessor("ID", {
+    header: "ID",
+    cell: (info) => info.getValue(),
+  }),
   columnHelper.accessor("product", {
     header: "Product",
     cell: (info) => {

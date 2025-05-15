@@ -10,6 +10,7 @@ import useLeadsStore from "../store/leads";
 import useDealsStore from "../store/deal";
 import useTasksStore from "../store/tasks";
 import { Link } from "react-router-dom";
+import Activities from "./Activities";
 
 interface StatCardProps {
   title: string;
@@ -112,7 +113,7 @@ const Dashboard = () => {
 
       <div className="grid grid-cols-1 gap-8 lg:grid-cols-2">
         {/* Recent Activity */}
-        {/* <div className="bg-white rounded-xl shadow-sm">
+        <div className="bg-white rounded-xl shadow-sm">
           <div className="border-b border-gray-200 px-6 py-4">
             <h2 className="text-lg font-medium text-gray-900">
               Recent Activity
@@ -123,7 +124,7 @@ const Dashboard = () => {
               <Activities isDashboard={true} />
             </div>
           </div>
-        </div> */}
+        </div>
 
         {/* Quick Stats */}
         <div className="bg-white rounded-xl shadow-sm">
