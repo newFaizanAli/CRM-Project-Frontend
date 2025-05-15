@@ -3,7 +3,7 @@
 
 // Project Url
 
-export const ProjectURL = `https://crm-demo-backend-ochre.vercel.app`;
+export const ProjectURL = `https://crm-project-backend-mu.vercel.app`;
 
 
 export const unitTypes = [
