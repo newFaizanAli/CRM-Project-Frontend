@@ -12,8 +12,9 @@ import {
   Cog6ToothIcon,
   CubeIcon,
   IdentificationIcon,
+  ShoppingCartIcon
 } from "@heroicons/react/24/outline";
-import Header from "./Header";
+import Header from "../Header";
 
 const Layout = () => {
   const [sidebarOpen, setSidebarOpen] = useState(false);
@@ -28,6 +29,7 @@ const Layout = () => {
     { path: "/employees", label: "Employees", icon: IdentificationIcon },
 
     { path: "/stock", label: "Stock", icon: CubeIcon },
+    { path: "/purchase", label: "Purchase", icon: ShoppingCartIcon },
 
     { path: "/calendar", label: "Calendar", icon: CalendarIcon },
     { path: "/reports", label: "Reports", icon: ChartBarIcon },

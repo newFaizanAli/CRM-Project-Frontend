@@ -1,27 +1,26 @@
 import axios from "axios";
 import { create } from "zustand";
 import { ProjectURL } from "../utilities/const";
-import { Task, TaskInput } from "../utilities/types";
+import { Supplier } from "../utilities/types";
 import { toastError } from "../utilities/toastUtils";
 
-
-interface TasksState {
-  tasks: Task[];
+interface SupplierState {
+  suppliers: Supplier[];
   isFetched: boolean;
-  fetchTasks: () => Promise<void>;
+  fetchSuppliers: () => Promise<void>;
 
-  addTask: (lead: Omit<TaskInput, "id">) => void;
-  updateTask: (id: number, contact: Partial<TaskInput>) => void;
-  deleteTask: (id: number) => void;
+  addSupplier: (supplier: Omit<Supplier, "_id">) => Promise<void>;
+  updateSupplier: (id: string, supplier: Partial<Supplier>) => Promise<void>;
+  deleteSupplier: (id: string) => void;
 }
 
-const DUMMY_STORAGE_KEY = "dummy_tasks";
+const DUMMY_STORAGE_KEY = "dummy_suppliers";
 
-const useLeadsStore = create<TasksState>((set, get) => ({
-  tasks: [],
+const useSupplierStore = create<SupplierState>((set, get) => ({
+  suppliers: [],
   isFetched: false,
 
-  fetchTasks: async () => {
+  fetchSuppliers: async () => {
     const { isFetched } = get();
     if (isFetched) return;
 
@@ -29,47 +28,41 @@ const useLeadsStore = create<TasksState>((set, get) => ({
     const isDummy = localStorage.getItem("accounttype") === "dummy";
     if (isDummy) {
       const stored = localStorage.getItem(DUMMY_STORAGE_KEY);
-      const dummyLeads: Task[] = stored ? JSON.parse(stored) : [];
-      set({ tasks: dummyLeads, isFetched: true });
+      const dummySuppliers: Supplier[] = stored ? JSON.parse(stored) : [];
+      set({ suppliers: dummySuppliers, isFetched: true });
     } else {
       try {
-        const response = await axios.get(`${ProjectURL}/api/tasks`, {
+        const response = await axios.get(`${ProjectURL}/api/suppliers`, {
           headers: {
             Authorization: `Bearer ${token}`,
-            "Content-Type": "application/json",
           },
         });
-        const fetchedLeads = response.data;
-        set({ tasks: fetchedLeads, isFetched: true });
+        set({ suppliers: response.data, isFetched: true });
       } catch (err) {
-        console.error("Failed to fetch leads:", err);
+        console.error("Failed to fetch suppliers:", err);
       }
     }
   },
 
-  addTask: async (task) => {
+  addSupplier: async (supplier) => {
     const token = localStorage.getItem("token");
     const isDummy = localStorage.getItem("accounttype") === "dummy";
+
     if (isDummy) {
       const state = get();
-      const newId = Date.now();
-      const newLead: Task = { _id: newId, ...task };
-      const updated = [...state.tasks, newLead];
+      const newSupplier: Supplier = { _id: Date.now().toString(), ...supplier };
+      const updated = [...state.suppliers, newSupplier];
       localStorage.setItem(DUMMY_STORAGE_KEY, JSON.stringify(updated));
-      set({ tasks: updated });
+      set({ suppliers: updated });
     } else {
       try {
-        const response = await axios.post(`${ProjectURL}/api/tasks`, task, {
+        const response = await axios.post(`${ProjectURL}/api/suppliers`, supplier, {
           headers: {
             Authorization: `Bearer ${token}`,
-            "Content-Type": "application/json",
           },
         });
-
-        const newTask = response.data;
-
         set((state) => ({
-          tasks: [...state.tasks, newTask],
+          suppliers: [...state.suppliers, response.data],
         }));
       } catch (err) {
         const msg = err?.response?.data?.message;
@@ -78,26 +71,28 @@ const useLeadsStore = create<TasksState>((set, get) => ({
     }
   },
 
-  updateTask: async (id, task) => {
+  updateSupplier: async (id, supplier) => {
     const token = localStorage.getItem("token");
     const isDummy = localStorage.getItem("accounttype") === "dummy";
+
     if (isDummy) {
       const state = get();
-      const updatedLeads = state.tasks.map((c) =>
-        c._id === id ? { ...c, ...task } : c
+      const updatedSuppliers = state.suppliers.map((s) =>
+        s._id === id ? { ...s, ...supplier } : s
       );
-      localStorage.setItem(DUMMY_STORAGE_KEY, JSON.stringify(updatedLeads));
-      set({ tasks: updatedLeads });
+      localStorage.setItem(DUMMY_STORAGE_KEY, JSON.stringify(updatedSuppliers));
+      set({ suppliers: updatedSuppliers });
     } else {
       try {
-        await axios.put(`${ProjectURL}/api/tasks/${id}`, task, {
+        await axios.put(`${ProjectURL}/api/suppliers/${id}`, supplier, {
           headers: {
             Authorization: `Bearer ${token}`,
           },
         });
-
         set((state) => ({
-          tasks: state.tasks.map((l) => (l._id === id ? { ...l, ...task } : l)),
+          suppliers: state.suppliers.map((s) =>
+            s._id === id ? { ...s, ...supplier } : s
+          ),
         }));
       } catch (err) {
         const msg = err?.response?.data?.message;
@@ -106,31 +101,31 @@ const useLeadsStore = create<TasksState>((set, get) => ({
     }
   },
 
-  deleteTask: async (id) => {
+  deleteSupplier: async (id) => {
     const token = localStorage.getItem("token");
     const isDummy = localStorage.getItem("accounttype") === "dummy";
+
     if (isDummy) {
       const state = get();
-      const updated = state.tasks.filter((c) => c._id !== id);
+      const updated = state.suppliers.filter((s) => s._id !== id);
       localStorage.setItem(DUMMY_STORAGE_KEY, JSON.stringify(updated));
-      set({ tasks: updated });
+      set({ suppliers: updated });
     } else {
       try {
-        await axios.delete(`${ProjectURL}/api/tasks/${id}`, {
+        await axios.delete(`${ProjectURL}/api/suppliers/${id}`, {
           headers: {
             Authorization: `Bearer ${token}`,
           },
         });
-
         set((state) => ({
-          tasks: state.tasks.filter((task) => task._id !== id),
+          suppliers: state.suppliers.filter((s) => s._id !== id),
         }));
-      } catch (error) {
-        const msg = error?.response?.data?.message;
+      } catch (err) {
+        const msg = err?.response?.data?.message;
         toastError(msg);
       }
     }
   },
 }));
 
-export default useLeadsStore;
+export default useSupplierStore;

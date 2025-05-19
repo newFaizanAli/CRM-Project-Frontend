@@ -1,10 +1,9 @@
 //  const fullUrl = `http://localhost:8000${url}`;
-export const ProjectURL = `http://localhost:3000`;
+// export const ProjectURL = `http://localhost:3000`;
 
 // Project Url
 
-// export const ProjectURL = `https://crm-project-backend-mu.vercel.app`;
-
+export const ProjectURL = `https://crm-project-backend-mu.vercel.app`;
 
 export const unitTypes = [
   { label: "Pieces", value: "pcs" },
@@ -27,13 +26,32 @@ export const unitTypes = [
   { label: "Tray", value: "tray" },
 ];
 
-
-
-
 export const entryTypes = [
   { label: "Opening Stock", value: "Opening Stock" },
   { label: "Purchase", value: "Purchase" },
   { label: "Adjustment", value: "Adjustment" },
   { label: "Return", value: "Return" },
   { label: "Transfer", value: "Transfer" },
+];
+
+export const purchaseOrderStatus = [
+  { label: "Draft", value: "Draft" },
+  { label: "To Receive", value: "To Receive" },
+  { label: "Completed", value: "Completed" },
+  { label: "Cancelled", value: "Cancelled" },
+];
+
+
+export const purchaseReceiptStatus = [
+  { label: "Draft", value: "Draft" },
+  { label: "Received", value: "Received" },
+  { label: "Cancelled", value: "Cancelled" },
+];
+
+
+export const purchaseInvoicesStatus = [
+  { label: "Unpaid", value: "Unpaid" },
+  { label: "Partially Paid", value: "Partially Paid" },
+    { label: "Paid", value: "Paid" },
+  { label: "Cancelled", value: "Cancelled" },
 ];

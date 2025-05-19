@@ -5,7 +5,14 @@ import {
   Navigate,
 } from "react-router-dom";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
-import Layout from "./components/Layout";
+
+import Layout from "./components/Layout/Layout";
+import PurchaseLayout from "./components/Layout/PurchaseLayout";
+import StockLayout from "./components/Layout/StockLayout";
+
+import PurchaseDashboard from "./pages/Dashboard/PurchaseDashboard";
+import StockDashboard from "./pages/Dashboard/StockDashboard";
+
 import ProtectedRoute from "./components/ProtectedRoute";
 import Login from "./pages/Login";
 import Signup from "./pages/Signup";
@@ -27,8 +34,10 @@ import Warehouses from "./pages/Warehouses";
 import StockEntryPage from "./pages/StockEntry";
 import StockLedger from "./pages/StockLedger";
 import ToastProvider from "./components/ToastProvider";
-import StockDashboard from "./pages/Dashboard/StockDashboard";
-import StockLayout from "./components/Layout/StockLayout";
+import Suppliers from "./pages/Supplier";
+import PurchaseOrders from "./pages/PurchaseOrder";
+import PurchaseReceipts from "./pages/PurchaseReceipt";
+import PurchaseInvoices from "./pages/PurchaseInvoice";
 
 const queryClient = new QueryClient();
 
@@ -57,6 +66,21 @@ function App() {
                 <Route path="stockentry" element={<StockEntryPage />} />
                 <Route path="stockledger" element={<StockLedger />} />
               </Route>
+
+              <Route path="/purchase" element={<PurchaseLayout />}>
+                <Route index element={<PurchaseDashboard />} />
+                <Route path="suppliers" element={<Suppliers />} />
+                <Route path="orders" element={<PurchaseOrders />} />
+                <Route
+                  path="receipts"
+                  element={<PurchaseReceipts />}
+                />
+                <Route
+                  path="invoices"
+                  element={<PurchaseInvoices />}
+                />
+              </Route>
+
               <Route path="/calendar" element={<Calendar />} />
               <Route path="/reports" element={<Reports />} />
               <Route path="/projects" element={<Projects />} />

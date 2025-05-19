@@ -4,16 +4,6 @@ import useTasksStore from '../store/tasks';
 import { Task, TaskInput } from '../utilities/types';
 
 
-
-// interface TaskFormData {
-//   title: string;
-//   description: string;
-//   dueDate: string;
-//   status: 'pending' | 'in-progress' | 'completed';
-//   priority: 'low' | 'medium' | 'high';
-//   assignedTo: string;
-// }
-
 interface TaskFormProps {
   task?: Task;
   onClose: () => void;
