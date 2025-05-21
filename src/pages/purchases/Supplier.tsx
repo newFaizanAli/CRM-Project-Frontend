@@ -6,113 +6,120 @@ import {
   createColumnHelper,
   ColumnDef,
 } from "@tanstack/react-table";
-import { PurchaseReceipt } from "../utilities/types";
-import usePurchaseReceiptStore from "../store/purchase-receipts";
-import PurchaseReceiptForm from "../components/PurchaseReceiptForm";
+import { Supplier } from "../../utilities/types";
+import useSupplierStore from "../../store/suppliers";
+import SupplierForm from "../../components/SupplierForm";
 
-const columnHelper = createColumnHelper<PurchaseReceipt>();
+const columnHelper = createColumnHelper<Supplier>();
 
-const columns: ColumnDef<PurchaseReceipt, any>[] = [
+const columns: ColumnDef<Supplier, any>[] = [
   columnHelper.accessor("ID", {
     header: "ID",
     cell: (info) => info.getValue(),
   }),
-
-  columnHelper.accessor((row) => row.purchaseOrder?.ID || "-", {
-    id: "purchaseOrderId",
-    header: "PO ID",
+  columnHelper.accessor("name", {
+    header: "Name",
     cell: (info) => info.getValue(),
   }),
-  columnHelper.accessor((row) => row.supplier?.name || "-", {
-    id: "supplierName",
-    header: "Supplier",
+  columnHelper.accessor("email", {
+    header: "Email",
     cell: (info) => info.getValue(),
   }),
-  columnHelper.accessor((row) => row.warehouse?.name || "-", {
-    id: "warehouseName",
-    header: "Warehouse",
+  columnHelper.accessor("phone", {
+    header: "Phone",
     cell: (info) => info.getValue(),
   }),
-
-  columnHelper.accessor("receiptDate", {
-    header: "Receipt Date",
-    cell: (info) => new Date(info.getValue()).toLocaleDateString(),
+  columnHelper.accessor("contactPerson", {
+    header: "Person",
+    cell: (info) => info.getValue(),
+  }),
+  columnHelper.accessor("gstNumber", {
+    header: "GST #",
+    cell: (info) => info.getValue(),
   }),
   columnHelper.accessor("status", {
     header: "Status",
+    cell: (info) => {
+      const status = info.getValue();
+      const color = {
+        Active: "bg-green-100 text-green-800",
+        Inactive: "bg-red-100 text-red-800",
+      }[status];
+      return (
+        <span className={`px-2 py-1 rounded-full text-xs font-medium ${color}`}>
+          {status}
+        </span>
+      );
+    },
+  }),
+  columnHelper.accessor("supplierType", {
+    header: "Type",
+    cell: (info) => info.getValue(),
+  }),
+  columnHelper.accessor("remarks", {
+    header: "Remarks",
     cell: (info) => info.getValue(),
   }),
 ];
 
-const PurchaseReceipts = () => {
-  const {
-    purchaseReceipts,
-    deletePurchaseReceipt,
-    fetchPurchaseReceipts,
-    isFetched,
-  } = usePurchaseReceiptStore();
+const Suppliers = () => {
+  const { suppliers, deleteSupplier, fetchSuppliers, isFetched } =
+    useSupplierStore();
 
   const [isModalOpen, setIsModalOpen] = useState(false);
-  const [selectedReceipt, setSelectedReceipt] = useState<
-    PurchaseReceipt | undefined
+  const [selectedSupplier, setSelectedSupplier] = useState<
+    Supplier | undefined
   >();
 
   useEffect(() => {
     if (!isFetched) {
-      fetchPurchaseReceipts();
+      fetchSuppliers();
     }
-  }, [fetchPurchaseReceipts, isFetched]);
+  }, [fetchSuppliers, isFetched]);
 
   const table = useReactTable({
-    data: purchaseReceipts,
+    data: suppliers,
     columns,
     getCoreRowModel: getCoreRowModel(),
   });
 
   const handleDelete = (id: string) => {
-    if (
-      window.confirm("Are you sure you want to delete this purchase receipt?")
-    ) {
-      deletePurchaseReceipt(String(id));
+    if (window.confirm("Are you sure you want to delete this supplier?")) {
+      deleteSupplier(String(id));
     }
   };
 
-  const handleEdit = (pur_rpt: PurchaseReceipt) => {
-    setSelectedReceipt(pur_rpt);
+  const handleEdit = (supplier: Supplier) => {
+    setSelectedSupplier(supplier);
     setIsModalOpen(true);
   };
 
   const handleAdd = () => {
-    setSelectedReceipt(undefined);
+    setSelectedSupplier(undefined);
     setIsModalOpen(true);
   };
 
   const handleClose = () => {
     setIsModalOpen(false);
-    setSelectedReceipt(undefined);
+    setSelectedSupplier(undefined);
   };
 
   return (
     <div className="p-6">
       <div className="flex justify-between items-center mb-6">
-        <h1 className="text-2xl font-bold text-gray-900">Purchase Receipts</h1>
+        <h1 className="text-2xl font-bold text-gray-900">Suppliers</h1>
         <button onClick={handleAdd} className="btn btn-primary">
-          Add Purchase Receipt
+          Add Supplier
         </button>
       </div>
 
       {isModalOpen && (
-        <div className="fixed inset-0 bg-gray-500 bg-opacity-75 flex items-center justify-center p-4 z-50">
-          <div className="bg-white rounded-lg max-h-screen overflow-y-auto w-full max-w-3xl p-6">
+        <div className="fixed inset-0 bg-gray-500 bg-opacity-75 flex items-center justify-center p-4">
+          <div className="bg-white rounded-lg p-6 max-w-2xl w-full">
             <h2 className="text-xl font-semibold mb-4">
-              {selectedReceipt
-                ? "Edit Purchase Receipt"
-                : "Add Purchase Receipt"}
+              {selectedSupplier ? "Edit Supplier" : "Add Supplier"}
             </h2>
-            <PurchaseReceiptForm
-              receipt={selectedReceipt}
-              onClose={handleClose}
-            />
+            <SupplierForm supplier={selectedSupplier} onClose={handleClose} />
           </div>
         </div>
       )}
@@ -170,4 +177,4 @@ const PurchaseReceipts = () => {
   );
 };
 
-export default PurchaseReceipts;
+export default Suppliers;

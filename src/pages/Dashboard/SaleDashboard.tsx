@@ -1,45 +1,40 @@
 import { Link } from "react-router-dom";
-import { 
-  TruckIcon, 
-  ShoppingCartIcon, 
-  ReceiptRefundIcon, 
-  DocumentTextIcon, 
-  ArrowUturnLeftIcon 
+import {
+  UserIcon,
+  ShoppingCartIcon,
+  DocumentTextIcon,
+  ArrowUturnLeftIcon,
 } from "@heroicons/react/24/outline";
 
-const purchaseModules = [
+const saleModules = [
   {
-    name: "Supplier",
-    icon: <TruckIcon className="h-8 w-8" />,
-    path: "/purchase/suppliers",
+    name: "Customers",
+    icon: <UserIcon className="h-8 w-8" />,
+    path: "/sale/customers",
   },
   {
     name: "Orders",
     icon: <ShoppingCartIcon className="h-8 w-8" />,
-    path: "/purchase/orders",
-  },
-  {
-    name: "Receipts",
-    icon: <ReceiptRefundIcon className="h-8 w-8" />,
-    path: "/purchase/receipts",
+    path: "/sale/orders",
   },
   {
     name: "Invoices",
     icon: <DocumentTextIcon className="h-8 w-8" />,
-    path: "/purchase/invoices",
+    path: "/sale/invoices",
   },
   {
-    name: "Return",
-    icon: <ArrowUturnLeftIcon className="h-8 w-8" />, // ← fixed icon
-    path: "/purchase/returns",
+    name: "Returns",
+    icon: <ArrowUturnLeftIcon className="h-8 w-8" />,
+    path: "/sale/returns",
   },
 ];
-export default function PurchaseDashboard() {
+
+export default function SaleDashboard() {
   return (
     <div className="p-8">
-      <h1 className="text-2xl font-bold mb-6">Purchase</h1>
+      <h1 className="text-2xl font-bold mb-6">Sale</h1>
       <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6">
-        {purchaseModules.map((module) => (
+        {saleModules.map((module) => (
           <Link
             key={module.name}
             to={module.path}

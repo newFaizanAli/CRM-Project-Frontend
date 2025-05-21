@@ -7,8 +7,8 @@ import {
   ColumnDef,
 } from "@tanstack/react-table";
 
-import { StockLedger } from "../utilities/types";
-import useStockLedgerStore from "../store/store_ledger";
+import { StockLedger } from "../../utilities/types";
+import useStockLedgerStore from "../../store/store_ledger";
 
 const columnHelper = createColumnHelper<StockLedger>();
 

@@ -6,124 +6,123 @@ import {
   createColumnHelper,
   ColumnDef,
 } from "@tanstack/react-table";
-import { Supplier } from "../utilities/types";
-import useSupplierStore from "../store/suppliers";
-import SupplierForm from "../components/SupplierForm";
 
-const columnHelper = createColumnHelper<Supplier>();
+import useStockEntryStore from "../../store/stock_entry";
+import StockEntryForm from "../../components/StockEntryForm";
+import { StockEntry } from "../../utilities/types";
 
-const columns: ColumnDef<Supplier, any>[] = [
+const columnHelper = createColumnHelper<StockEntry>();
+
+const columns: ColumnDef<StockEntry, any>[] = [
   columnHelper.accessor("ID", {
     header: "ID",
     cell: (info) => info.getValue(),
   }),
-  columnHelper.accessor("name", {
-    header: "Name",
-    cell: (info) => info.getValue(),
-  }),
-  columnHelper.accessor("email", {
-    header: "Email",
-    cell: (info) => info.getValue(),
-  }),
-  columnHelper.accessor("phone", {
-    header: "Phone",
-    cell: (info) => info.getValue(),
-  }),
-  columnHelper.accessor("contactPerson", {
-    header: "Person",
-    cell: (info) => info.getValue(),
-  }),
-  columnHelper.accessor("gstNumber", {
-    header: "GST #",
-    cell: (info) => info.getValue(),
-  }),
-  columnHelper.accessor("status", {
-    header: "Status",
+  columnHelper.accessor("product", {
+    header: "Product",
     cell: (info) => {
-      const status = info.getValue();
-      const color = {
-        Active: "bg-green-100 text-green-800",
-        Inactive: "bg-red-100 text-red-800",
-      }[status];
-      return (
-        <span className={`px-2 py-1 rounded-full text-xs font-medium ${color}`}>
-          {status}
-        </span>
-      );
+      const value = info.getValue();
+      return typeof value === "object" ? value?.name ?? "-" : value || "-";
     },
   }),
-  columnHelper.accessor("supplierType", {
-    header: "Type",
+  columnHelper.accessor("entryType", {
+    header: "Entry Type",
+    cell: (info) => info.getValue() || "-",
+  }),
+  columnHelper.accessor("entryDate", {
+    header: "Expire Date",
+    cell: (info) => {
+      const date = info.getValue();
+      return date ? new Date(date).toLocaleDateString() : "-";
+    },
+  }),
+  columnHelper.accessor("quantity", {
+    header: "Quantity",
     cell: (info) => info.getValue(),
   }),
-  columnHelper.accessor("remarks", {
-    header: "Remarks",
+  columnHelper.accessor("rate", {
+    header: "Rate",
     cell: (info) => info.getValue(),
+  }),
+  columnHelper.accessor("total", {
+    header: "Total",
+    cell: (info) => info.getValue(),
+  }),
+  columnHelper.accessor("warehouse", {
+    header: "Warehouse",
+    cell: (info) => {
+      const value = info.getValue();
+      return typeof value === "object" ? value?.name ?? "-" : value || "-";
+    },
   }),
 ];
 
-const Suppliers = () => {
-  const { suppliers, deleteSupplier, fetchSuppliers, isFetched } =
-    useSupplierStore();
+const StockEntryPage = () => {
+  const {
+    stockentry: stockEntries,
+    deleteStockEntry,
+    fetchStockEntries,
+    isFetched,
+  } = useStockEntryStore();
 
   const [isModalOpen, setIsModalOpen] = useState(false);
-  const [selectedSupplier, setSelectedSupplier] = useState<
-    Supplier | undefined
-  >();
+  const [selectedEntry, setSelectedEntry] = useState<StockEntry | undefined>();
 
   useEffect(() => {
     if (!isFetched) {
-      fetchSuppliers();
+      fetchStockEntries();
     }
-  }, [fetchSuppliers, isFetched]);
+  }, [isFetched, fetchStockEntries]);
 
   const table = useReactTable({
-    data: suppliers,
+    data: stockEntries,
     columns,
     getCoreRowModel: getCoreRowModel(),
   });
 
-  const handleDelete = (id: string) => {
-    if (window.confirm("Are you sure you want to delete this supplier?")) {
-      deleteSupplier(String(id));
+  const handleDelete = (id?: string) => {
+    if (id && confirm("Are you sure you want to delete this stock entry?")) {
+      deleteStockEntry(id.toString());
     }
   };
 
-  const handleEdit = (supplier: Supplier) => {
-    setSelectedSupplier(supplier);
+  const handleEdit = (entry: StockEntry) => {
+    setSelectedEntry(entry);
     setIsModalOpen(true);
   };
 
   const handleAdd = () => {
-    setSelectedSupplier(undefined);
+    setSelectedEntry(undefined);
     setIsModalOpen(true);
   };
 
   const handleClose = () => {
+    setSelectedEntry(undefined);
     setIsModalOpen(false);
-    setSelectedSupplier(undefined);
   };
 
   return (
     <div className="p-6">
       <div className="flex justify-between items-center mb-6">
-        <h1 className="text-2xl font-bold text-gray-900">Suppliers</h1>
+        <h1 className="text-2xl font-bold text-gray-900">Stock Entries</h1>
         <button onClick={handleAdd} className="btn btn-primary">
-          Add Supplier
+          Add Stock Entry
         </button>
       </div>
 
+      {/* Modal */}
       {isModalOpen && (
-        <div className="fixed inset-0 bg-gray-500 bg-opacity-75 flex items-center justify-center p-4">
-          <div className="bg-white rounded-lg p-6 max-w-2xl w-full">
+        <div className="fixed inset-0 bg-black bg-opacity-40 flex items-center justify-center z-50 p-4">
+          <div className="bg-white rounded-lg p-6 w-full max-w-xl">
             <h2 className="text-xl font-semibold mb-4">
-              {selectedSupplier ? "Edit Supplier" : "Add Supplier"}
+              {selectedEntry ? "Edit Stock Entry" : "Add Stock Entry"}
             </h2>
-            <SupplierForm supplier={selectedSupplier} onClose={handleClose} />
+            <StockEntryForm stockentry={selectedEntry} onClose={handleClose} />
           </div>
         </div>
       )}
 
+      {/* Table */}
       <div className="bg-white shadow rounded-lg overflow-hidden">
         <table className="min-w-full divide-y divide-gray-200">
           <thead className="bg-gray-50">
@@ -162,7 +161,7 @@ const Suppliers = () => {
                     Edit
                   </button>
                   <button
-                    onClick={() => handleDelete(row.original._id)}
+                    onClick={() => handleDelete(String(row.original._id))}
                     className="text-red-600 hover:text-red-900"
                   >
                     Delete
@@ -177,4 +176,4 @@ const Suppliers = () => {
   );
 };
 
-export default Suppliers;
+export default StockEntryPage;

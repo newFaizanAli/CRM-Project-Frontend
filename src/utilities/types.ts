@@ -268,6 +268,7 @@ export interface PurchaseInvoice {
   dueDate?: string;
   status: PurchaseInvoiceStatus;
   remarks: string;
+  stockEntered: boolean;
   items: PurchaseInvoiceItem[];
   totalAmount: number;
 }
@@ -280,3 +281,128 @@ export type PurchaseInvoiceFormData = Omit<
 export type PurchaseInvoiceFormWithId = PurchaseInvoiceFormData & {
   _id: string;
 };
+
+
+// --------- Purchase Return -----------
+
+export interface PurchaseReturnItem {
+  productName: string;
+  product: string;
+  quantity: number;
+  rate: number;
+  amount: number;
+  maxQty: number;
+}
+
+export type PurchaseReturnStatus =
+  | "Draft"
+  | "Submitted"
+  | "Cancelled"; 
+
+export interface PurchaseReturn {
+  _id?: string;
+  purchaseReceipt: {
+    _id: string;
+    ID: string;
+  };
+  supplier: {
+    _id: string;
+    name: string;
+  };
+  returnDate?: string;
+  status: PurchaseReturnStatus;
+  reason: string;
+  items: PurchaseReturnItem[];
+}
+
+export type PurchaseReturnFormData = Omit<
+  PurchaseReturn,
+  "_id" | "createdAt" | "updatedAt"
+>;
+
+export type PurchaseReturnFormWithId = PurchaseReturnFormData & {
+  _id: string;
+};
+
+
+
+// --------- Customer -----------
+
+
+export type CustomerStatus =
+  | "active"
+  | "inactive"
+  | "lead"; 
+
+
+export type CustomerType =
+  | "Regular"
+  | "Walk-in"
+  | "Wholesale" 
+  | "Retail";
+
+export interface Customer {
+  _id?: string;
+   ID?: string;
+  name?: string;
+  email?: string;
+  phone?: string;
+  status: CustomerStatus;
+  type: CustomerType;
+  address: string;
+  contactPerson: string;
+  company: string;
+  remarks: string;
+  notes: string;
+}
+
+export type CustomerFormData = Omit<
+  Customer,
+  "_id" | "createdAt" | "updatedAt"
+>;
+
+export type CustomerFormWithId = CustomerFormData & {
+  _id: string;
+};
+
+
+// -----------Sale Order--------------
+
+export interface SaleOrderItem {
+  product: string; // Product _id
+  quantity: number;
+  rate: number;
+  amount: number;
+}
+
+export type SaleOrderStatus =
+  | "Pending"
+  | "Partially Delivered"
+  | "Delivered"
+  | "Cancelled";
+
+export interface SaleOrder {
+  _id?: string;
+  ID?: string;
+  customer: {
+    _id: string;
+    name: string;
+  };
+  dueDate?: string;
+  deliveryDate: string;
+  status?: SaleOrderStatus;
+  items: SaleOrderItem[];
+  totalAmount: number;
+  taxesAndCharges?: number;
+  discount?: number;
+  grandTotal: number;
+  remarks?: string;
+}
+
+export type SaleOrderFormData = Omit<
+  SaleOrder,
+  "_id" | "createdAt" | "updatedAt"
+>;
+
+export type SaleOrderFormWithId = SaleOrderFormData & { _id: string };
+

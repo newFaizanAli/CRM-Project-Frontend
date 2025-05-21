@@ -34,7 +34,7 @@ const PurchaseInvoiceForm = ({
         rate: item.rate,
         amount: item.amount || item.rate * (item.quantity ?? 1),
         productName: fullProduct?.name || "Unknown",
-        maxQty: (item.receivedQtn || item.quantity) ?? 1,
+        maxQty: (item.receivedQty || item.quantity) ?? 1,
       };
     }) || [];
 
@@ -56,6 +56,7 @@ const PurchaseInvoiceForm = ({
           remarks: invoice.remarks || "",
           status: invoice.status || "Draft",
           purchaseReceipt: invoice.purchaseReceipt?._id || "",
+          stockEntered: invoice.stockEntered || false,
         }
       : {
           supplier: "",
@@ -64,82 +65,58 @@ const PurchaseInvoiceForm = ({
           remarks: "",
           status: "Unpaid",
           purchaseReceipt: "",
+          stockEntered: false,
         },
   });
 
   const purchaseReceiptId = watch("purchaseReceipt") || "";
 
-useEffect(() => {
-  // Clear items when no receipt is selected
-  if (!purchaseReceiptId) {
-    setItems([]);
-    return;
-  }
+  useEffect(() => {
+    // Clear items when no receipt is selected
+    if (!purchaseReceiptId) {
+      
+      setItems([]);
+      return;
+    }
 
-  if (typeof purchaseReceiptId === "string" && purchaseReceiptId) {
-    const selectedReceipt = [...purchaseReceipts as any].find(
-      (receipt: any) => receipt._id === purchaseReceiptId
-    );
+    if (typeof purchaseReceiptId === "string" && purchaseReceiptId) {
+      const selectedReceipt = [...(purchaseReceipts as any)].find(
+        (receipt: any) => receipt._id === purchaseReceiptId
+      );
 
-    if (selectedReceipt) {
-      // Set the supplier if available
-      if (selectedReceipt.supplier?._id) {
-        setValue("supplier", selectedReceipt.supplier._id);
-      }
+      if (selectedReceipt) {
+        // Set the supplier if available
+        if (selectedReceipt.supplier?._id) {
+          setValue("supplier", selectedReceipt.supplier._id);
+        }
 
-      // Process items only if we have them
-      if (selectedReceipt.items?.length) {
-        const newItems = selectedReceipt.items.map((item: any) => {
-          // Handle both cases where product might be object or just ID
-          const productId = item.product?._id || item.product;
-          const product = products.find((p) => p._id === productId);
-          
-          const receivedQty = item.receivedQtn || item.quantity || 1;
-          const itemRate = item.rate || product?.sellingPrice || 0;
+        // Process items only if we have them
+        if (selectedReceipt.items?.length) {
+          const newItems = selectedReceipt.items.map((item: any) => {
+            // Handle both cases where product might be object or just ID
+            const productId = item.product?._id || item.product;
+            const product = products.find((p) => p._id === productId);
 
-          return {
-            product: productId,
-            quantity: receivedQty,
-            rate: itemRate,
-            amount: itemRate * receivedQty,
-            maxQty: receivedQty,
-            productName: item.product?.name || product?.name || "Unknown",
-          };
-        });
+            const receivedQty = item.receivedQty || item.quantity || 1;
+            const itemRate = item.rate || product?.sellingPrice || 0;
 
-        setItems(newItems);
-      } else {
-        setItems([]); // Clear items if receipt has no items
+            return {
+              product: productId,
+              quantity: receivedQty,
+              rate: itemRate,
+              amount: itemRate * receivedQty,
+              maxQty: receivedQty,
+              productName: item.product?.name || product?.name || "Unknown",
+            };
+          });
+
+          setItems(newItems);
+        } else {
+          setItems([]); // Clear items if receipt has no items
+        }
       }
     }
-  }
-}, [purchaseReceiptId, purchaseReceipts, setValue, products, invoice]);
-
-  // useEffect(() => {
-  //   if (typeof purchaseReceiptId === "string" && purchaseReceiptId.trim()) {
-  //     const selectedPO = (purchaseReceipts as any).find(
-  //       (po: any) => po._id === purchaseReceiptId
-  //     );
-
-  //     if (selectedPO?.supplier?._id) {
-  //       setValue("supplier", selectedPO.supplier._id);
-  //     }
-
-  //     // Only set items if we're not in edit mode (no receipt)
-  //     if (!invoice && selectedPO?.items?.length) {
-  //       const newItems = selectedPO.items.map((item: any) => ({
-  //         product: item.product._id,
-  //         quantity: item.receivedQtn,
-  //         rate: item.rate,
-  //         amount: item.rate * item.receivedQtn,
-  //         maxQty: item.receivedQtn,
-  //         productName: item.product.name || "Unknown",
-  //       }));
-
-  //       setItems(newItems);
-  //     }
-  //   }
-  // }, [purchaseReceiptId, purchaseReceipts, setValue, invoice]);
+  }, [purchaseReceiptId, purchaseReceipts, setValue, products, invoice]);
 
   useEffect(() => {
     const total = items.reduce((sum, item) => sum + item.amount, 0);
@@ -177,7 +154,7 @@ useEffect(() => {
       const maxQty = item.maxQty || item.quantity;
       if (value > maxQty) {
         alert(
-          `Quantity ${value} ziada hai order received quantity (${maxQty}) se`
+          `Quantity ${value} cannot be exceed from order received quantity (${maxQty}) se`
         );
         return;
       }
@@ -340,6 +317,23 @@ useEffect(() => {
         <div>
           <label>Total Amount:</label>
           <p className="input bg-gray-100">{totalAmount.toFixed(2)}</p>
+        </div>
+
+        <div>
+          <label>Stock Enter</label>
+          <select
+            {...register("stockEntered", {
+              required: "Stock Entry is required",
+            })}
+            className="input w-full"
+          >
+            <option value="">-- Select stock enter --</option>
+            <option value="true"> Yes </option>
+            <option value="false"> No </option>
+          </select>
+          {errors.stockEntered && (
+            <p className="text-red-500">{errors.stockEntered.message}</p>
+          )}
         </div>
 
         <div>

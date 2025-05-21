@@ -2,40 +2,41 @@
 
 import { Link } from "react-router-dom";
 import {
-  Boxes,
-  Warehouse,
-  PackageCheck,
-  FilePlus2,
-  BarChart3,
-} from "lucide-react";
+  Squares2X2Icon,       // Category
+  CubeIcon,              // Product
+  BuildingStorefrontIcon,// Warehouse
+  ArrowDownTrayIcon,     // Stock Entry
+  ClipboardDocumentListIcon // Stock Ledger
+} from "@heroicons/react/24/outline";
 
 const stockModules = [
   {
     name: "Category",
-    icon: <Boxes size={32} />,
+    icon: <Squares2X2Icon className="h-8 w-8" />,
     path: "/stock/categories",
   },
   {
     name: "Product",
-    icon: <PackageCheck size={32} />,
+    icon: <CubeIcon className="h-8 w-8" />,
     path: "/stock/products",
   },
   {
     name: "Warehouse",
-    icon: <Warehouse size={32} />,
+    icon: <BuildingStorefrontIcon className="h-8 w-8" />,
     path: "/stock/warehouses",
   },
   {
     name: "Stock Entry",
-    icon: <FilePlus2 size={32} />,
+    icon: <ArrowDownTrayIcon className="h-8 w-8" />,
     path: "/stock/stockentry",
   },
   {
     name: "Stock Ledger",
-    icon: <BarChart3 size={32} />,
+    icon: <ClipboardDocumentListIcon className="h-8 w-8" />,
     path: "/stock/stockledger",
   },
 ];
+
 
 export default function StockDashboard() {
   return (

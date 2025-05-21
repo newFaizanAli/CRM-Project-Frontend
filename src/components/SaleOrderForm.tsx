@@ -1,47 +1,36 @@
 import { useForm } from "react-hook-form";
 import { useEffect, useState } from "react";
 import {
-  PurchaseReceiptFormData,
-  PurchaseReceiptItem,
+  SaleOrderItem,
+  SaleOrderFormData,
 } from "../utilities/types";
 import useProductsStore from "../store/products";
-import useSupplierStore from "../store/suppliers";
-import { purchaseReceiptStatus } from "../utilities/const";
-import usePurchaseReceiptStore from "../store/purchase-receipts";
-import useWarehouseStore from "../store/warehouse";
-import usePurchaseOrderStore from "../store/purchase-orders";
+import { saleOrderStatus } from "../utilities/const";
+import useCustomerStore from "../store/customers";
+import useSaleOrderStore from "../store/sale-orders";
 
-interface PurchaseReceiptFormProps {
-  receipt?: any;
+interface SaleOrderFormProps {
+  order?: any;
   onClose: () => void;
 }
 
-const PurchaseReceiptForm = ({
-  receipt,
-  onClose,
-}: PurchaseReceiptFormProps) => {
-  const { addPurchaseReceipt, updatePurchaseReceipt } =
-    usePurchaseReceiptStore();
+const SaleOrderForm = ({ order, onClose }: SaleOrderFormProps) => {
+  const { addSaleOrder, updateSaleOrder } = useSaleOrderStore();
   const { products } = useProductsStore();
-  const { suppliers } = useSupplierStore();
-  const { warehouses } = useWarehouseStore();
-  const { purchaseOrders } = usePurchaseOrderStore();
+  const { customers } = useCustomerStore();
 
+  // Transform items if order is passed
   const initialItems =
-    receipt?.items?.map((item: any) => {
-      const fullProduct = products.find((p) => p._id === item.product);
-      return {
-        product: item.product,
-        receivedQty: item.receivedQty ?? 1,
-        rate: item.rate,
-        amount: item.amount || item.rate * (item.receivedQty ?? 1),
-        productName: fullProduct?.name || "Unknown",
-        maxQty: (item.quantity || item.receivedQty) ?? 1, // Fixed with parentheses
-      };
-    }) || [];
+    order?.items?.map((item: any) => ({
+      product: item.product._id,
+      quantity: item.quantity,
+      rate: item.rate,
+      amount: item.amount,
+    })) || [];
 
-  const [items, setItems] = useState<PurchaseReceiptItem[]>(initialItems);
+  const [items, setItems] = useState<SaleOrderItem[]>(initialItems);
   const [totalAmount, setTotalAmount] = useState(0);
+  const [grandTotal, setGrandTotal] = useState(0);
 
   const {
     register,
@@ -49,100 +38,73 @@ const PurchaseReceiptForm = ({
     setValue,
     watch,
     formState: { errors },
-  } = useForm<PurchaseReceiptFormData>({
-    defaultValues: receipt
+  } = useForm<SaleOrderFormData>({
+    defaultValues: order
       ? {
-          supplier: receipt.supplier?._id || "",
-          receiptDate: receipt.receiptDate?.slice(0, 10) || "",
-          totalAmount: receipt.totalAmount || 0,
-          remarks: receipt.remarks || "",
-          status: receipt.status || "Draft",
-          warehouse: receipt.warehouse?._id || "", // fix yeh hai
-          purchaseOrder: receipt.purchaseOrder?._id || "", // fix yeh hai
+          customer: order.customer?._id || "",
+          deliveryDate: order.deliveryDate?.slice(0, 10) || "",
+          dueDate: order.dueDate?.slice(0, 10) || "",
+          taxesAndCharges: order.taxesAndCharges || 0,
+          discount: order.discount || 0,
+          totalAmount: order.totalAmount || 0,
+          grandTotal: order.grandTotal || 0,
+          remarks: order.remarks || "",
+          status: order.status || "",
         }
       : {
-          supplier: "",
-          receiptDate: "",
+          customer: "",
+          deliveryDate: "",
+          dueDate: "",
+          taxesAndCharges: 0,
+          discount: 0,
           totalAmount: 0,
+          grandTotal: 0,
           remarks: "",
-          status: "Draft",
-          warehouse: "",
-          purchaseOrder: "",
+          status: "Pending",
         },
   });
 
-  const purchaseOrderId = watch("purchaseOrder") || "";
-
-  useEffect(() => {
-    if (typeof purchaseOrderId === "string" && purchaseOrderId.trim()) {
-      const selectedPO = (purchaseOrders as any).find(
-        (po: any) => po._id === purchaseOrderId
-      );
-
-      if (selectedPO?.supplier?._id) {
-        setValue("supplier", selectedPO.supplier._id);
-      }
-
-      // Only set items if we're not in edit mode (no receipt)
-      if (!receipt && selectedPO?.items?.length) {
-        const newItems = selectedPO.items.map((item: any) => ({
-          product: item.product._id,
-          receivedQty: item.quantity,
-          rate: item.rate,
-          amount: item.rate * item.quantity,
-          maxQty: item.quantity,
-          productName: item.product.name || "Unknown", // Add product name
-        }));
-
-        setItems(newItems);
-      }
-    }
-  }, [purchaseOrderId, purchaseOrders, setValue, receipt]);
+  const taxes = watch("taxesAndCharges") || 0;
+  const discount = watch("discount") || 0;
 
   useEffect(() => {
     const total = items.reduce((sum, item) => sum + item.amount, 0);
+    const taxAmount = (total * taxes) / 100;
+    const discountAmount = (total * discount) / 100;
+    const grand = total + taxAmount - discountAmount;
+
     setTotalAmount(total);
+    setGrandTotal(grand);
+
     setValue("totalAmount", total);
-  }, [items, setValue]);
+    setValue("grandTotal", grand);
+  }, [items, taxes, discount, setValue]);
 
   const handleAddItem = (productId: string) => {
     if (items.find((item) => item.product === productId)) return;
+
     const product = products.find((p) => p._id === productId);
     if (!product) return;
 
-    const newItem: PurchaseReceiptItem = {
+    const newItem: SaleOrderItem = {
       product: product._id,
-      receivedQty: 1,
+      quantity: 1,
       rate: product.sellingPrice,
-      amount: product.sellingPrice * 1,
-      maxQty: 0,
-      productName: product.name,
+      amount: product.sellingPrice,
     };
     setItems([...items, newItem]);
   };
 
   const handleItemChange = (
     index: number,
-    key: "receivedQty" | "rate",
+    key: "quantity" | "rate",
     value: number
   ) => {
     const updatedItems = [...items];
     const item = updatedItems[index];
-
-    if (key === "receivedQty") {
-      if (value < 1) return;
-
-      const maxQty = item.maxQty || item.receivedQty;
-      if (value > maxQty) {
-        alert(
-          `Received quantity ${value} cannot be exceed from order quantity (${maxQty}) se`
-        );
-        return;
-      }
-    }
-
+    if (key === "quantity" && value < 1) return;
     item[key] = value;
-    item.amount = item.receivedQty * item.rate;
+    item.amount = item.quantity * item.rate;
     setItems(updatedItems);
   };
 
@@ -152,12 +114,12 @@ const PurchaseReceiptForm = ({
     setItems(updated);
   };
 
-  const onSubmit = (data: PurchaseReceiptFormData) => {
+  const onSubmit = (data: SaleOrderFormData) => {
     const finalData = { ...data, items };
-    if (receipt) {
-      updatePurchaseReceipt(receipt._id, finalData);
+    if (order) {
+      updateSaleOrder(order._id, finalData);
     } else {
-      addPurchaseReceipt(finalData);
+      addSaleOrder(finalData);
     }
     onClose();
   };
@@ -166,71 +128,48 @@ const PurchaseReceiptForm = ({
     <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
       <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
         <div>
-          <label>Purchase Order</label>
+          <label>Customer</label>
           <select
-            {...register("purchaseOrder", { required: "Order is required" })}
+            {...register("customer", { required: "Customer is required" })}
             className="input w-full"
           >
-            <option value="">-- Select Order --</option>
-            {purchaseOrders.map((order) => (
-              <option key={order._id} value={order._id}>
-                {order.ID}
+            <option value="">-- Select Customer --</option>
+            {customers.map((customer) => (
+              <option key={customer._id} value={customer._id}>
+                {customer.name}
               </option>
             ))}
           </select>
-          {errors.purchaseOrder && (
-            <p className="text-red-500">{errors.purchaseOrder.message}</p>
+          {errors.customer && (
+            <p className="text-red-500">{errors.customer.message}</p>
           )}
         </div>
 
         <div>
-          <label>Supplier</label>
-          <select
-            {...register("supplier", { required: "Supplier is required" })}
-            className="input w-full"
-            disabled={!!watch("purchaseOrder")}
-          >
-            <option value="">-- Select Supplier --</option>
-            {suppliers.map((supplier) => (
-              <option key={supplier._id} value={supplier._id}>
-                {supplier.name}
-              </option>
-            ))}
-          </select>
-          {errors.supplier && (
-            <p className="text-red-500">{errors.supplier.message}</p>
-          )}
-        </div>
-
-        <div>
-          <label>Warehouse</label>
-          <select
-            {...register("warehouse", { required: "Warehouse is required" })}
-            className="input w-full"
-          >
-            <option value="">-- Select Warehouse --</option>
-            {warehouses.map((warehouse) => (
-              <option key={warehouse._id} value={warehouse._id}>
-                {`${warehouse.name} (${warehouse.location})`}
-              </option>
-            ))}
-          </select>
-          {errors.warehouse && (
-            <p className="text-red-500">{errors.warehouse.message}</p>
-          )}
-        </div>
-
-        <div>
-          <label>Receipt Date</label>
+          <label>Delivery Date</label>
           <input
             type="date"
-            {...register("receiptDate", {
+            {...register("deliveryDate", {
               required: "Date is required",
             })}
             className="input w-full"
           />
-          {errors.receiptDate && (
-            <p className="text-red-500">{errors.receiptDate.message}</p>
+          {errors.deliveryDate && (
+            <p className="text-red-500">{errors.deliveryDate.message}</p>
+          )}
+        </div>
+
+        <div>
+          <label>Due Date</label>
+          <input
+            type="date"
+            {...register("dueDate", {
+              required: "Date is required",
+            })}
+            className="input w-full"
+          />
+          {errors.dueDate && (
+            <p className="text-red-500">{errors.dueDate.message}</p>
           )}
         </div>
 
@@ -255,7 +194,7 @@ const PurchaseReceiptForm = ({
           <thead>
             <tr className="bg-gray-100">
               <th>Product</th>
-              <th>Received QTY</th>
+              <th>Quantity</th>
               <th>Rate</th>
               <th>Amount</th>
               <th>Action</th>
@@ -270,11 +209,11 @@ const PurchaseReceiptForm = ({
                   <td>
                     <input
                       type="number"
-                      value={item.receivedQty}
+                      value={item.quantity}
                       onChange={(e) =>
                         handleItemChange(
                           index,
-                          "receivedQty",
+                          "quantity",
                           parseInt(e.target.value)
                         )
                       }
@@ -314,8 +253,31 @@ const PurchaseReceiptForm = ({
 
       <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
         <div>
+          <label>Taxes (%)</label>
+          <input
+            type="number"
+            {...register("taxesAndCharges")}
+            className="input w-full"
+          />
+        </div>
+
+        <div>
+          <label>Discount (%)</label>
+          <input
+            type="number"
+            {...register("discount")}
+            className="input w-full"
+          />
+        </div>
+
+        <div>
           <label>Total Amount:</label>
           <p className="input bg-gray-100">{totalAmount.toFixed(2)}</p>
+        </div>
+
+        <div>
+          <label>Grand Total:</label>
+          <p className="input bg-gray-100">{grandTotal.toFixed(2)}</p>
         </div>
 
         <div>
@@ -325,7 +287,7 @@ const PurchaseReceiptForm = ({
             className="input w-full"
           >
             <option value="">-- Select Status --</option>
-            {purchaseReceiptStatus.map((en_t) => (
+            {saleOrderStatus.map((en_t) => (
               <option key={en_t.value} value={en_t.value}>
                 {en_t.label}
               </option>
@@ -336,7 +298,7 @@ const PurchaseReceiptForm = ({
           )}
         </div>
 
-        <div className="md:col-span-2">
+        <div>
           <label>Remarks</label>
           <textarea
             {...register("remarks")}
@@ -351,11 +313,11 @@ const PurchaseReceiptForm = ({
           Cancel
         </button>
         <button type="submit" className="btn btn-primary">
-          {receipt ? "Update" : "Create"} Purchase Receipt
+          {order ? "Update" : "Create"} Sale Order
         </button>
       </div>
     </form>
   );
 };
 
-export default PurchaseReceiptForm;
+export default SaleOrderForm;

@@ -6,103 +6,109 @@ import {
   createColumnHelper,
   ColumnDef,
 } from "@tanstack/react-table";
+import useCustomersStore from "../../store/customers";
+import CustomerForm from "../../components/CustomerForm";
+import { Customer, CustomerFormWithId } from "../../utilities/types";
 
-import { WahouseFormWithId, Warehouse } from "../utilities/types";
-import useWarehouseStore from "../store/warehouse";
-import WarehouseForm from "../components/WarehouseForm";
+const columnHelper = createColumnHelper<Customer>();
 
-const columnHelper = createColumnHelper<Warehouse>();
-
-const columns: ColumnDef<Warehouse, any>[] = [
+const columns: ColumnDef<Customer, any>[] = [
   columnHelper.accessor("ID", {
-    header: "Warehouse ID",
+    header: "Customer ID",
     cell: (info) => info.getValue(),
   }),
   columnHelper.accessor("name", {
     header: "Name",
     cell: (info) => info.getValue(),
   }),
-  columnHelper.accessor("location", {
-    header: "Location",
+  columnHelper.accessor("email", {
+    header: "Email",
     cell: (info) => info.getValue(),
   }),
-  columnHelper.accessor("description", {
-    header: "Description",
+  columnHelper.accessor("phone", {
+    header: "Phone",
     cell: (info) => info.getValue(),
   }),
-  columnHelper.accessor("isActive", {
-    header: "Status",
-    cell: (info) => (info.getValue() ? "Active" : "Inactive"),
+  columnHelper.accessor("address", {
+    header: "Address",
+    cell: (info) => info.getValue(),
   }),
 ];
 
-const Warehouses = () => {
-  const { warehouses, deleteWarehouse, fetchWarehouses, isFetched } =
-    useWarehouseStore();
+const Customers = () => {
+  const { customers, fetchCustomers, deleteCustomer, isFetched } =
+    useCustomersStore();
   const [isModalOpen, setIsModalOpen] = useState(false);
-  const [selectedWarehouse, setSelectedWarehouse] = useState<
-    WahouseFormWithId | undefined
+  const [selectedCustomer, setSelectedCustomer] = useState<
+    CustomerFormWithId | undefined
   >();
 
   useEffect(() => {
     if (!isFetched) {
-      fetchWarehouses();
+      fetchCustomers();
     }
-  }, [fetchWarehouses, isFetched]);
+  }, [fetchCustomers, isFetched]);
 
   const table = useReactTable({
-    data: warehouses,
+    data: customers,
     columns,
     getCoreRowModel: getCoreRowModel(),
   });
 
-  const handleDelete = (id: number) => {
-    if (window.confirm("Are you sure you want to delete this task?")) {
-      deleteWarehouse(id);
+  const handleDelete = (id: string) => {
+    if (window.confirm("Are you sure you want to delete this customer?")) {
+      deleteCustomer(id);
     }
   };
 
-  const handleEdit = (warehouse: Warehouse) => {
-    const formData: WahouseFormWithId = {
-      _id: warehouse._id,
-      name: warehouse.name,
-      location: warehouse.location,
-      description: warehouse.description,
-      isActive: warehouse.isActive,
+  const handleEdit = (customer: Customer) => {
+    const formData: CustomerFormWithId = {
+      _id: customer._id!,
+      name: customer.name ?? "",
+      email: customer.email ?? "",
+      phone: customer.phone ?? "",
+      address: customer.address ?? "",
+      status: customer.status,
+      type: customer.type,
+      contactPerson: customer.contactPerson ?? "",
+      company: customer.company ?? "",
+      remarks: customer.remarks ?? "",
+      notes: customer.notes ?? "",
     };
-    setSelectedWarehouse(formData);
+    setSelectedCustomer(formData);
     setIsModalOpen(true);
   };
 
   const handleAdd = () => {
-    setSelectedWarehouse(undefined);
+    setSelectedCustomer(undefined);
     setIsModalOpen(true);
   };
 
   const handleClose = () => {
     setIsModalOpen(false);
-    setSelectedWarehouse(undefined);
+    setSelectedCustomer(undefined);
   };
 
   return (
     <div className="p-6">
       <div className="flex justify-between items-center mb-6">
-        <h1 className="text-2xl font-bold text-gray-900">Warehouses</h1>
+        <h1 className="text-2xl font-bold text-gray-900">Customers</h1>
         <button onClick={handleAdd} className="btn btn-primary">
-          Add Warehosue
+          Add Customer
         </button>
       </div>
 
-      {isModalOpen && (
-        <div className="fixed inset-0 bg-gray-500 bg-opacity-75 flex items-center justify-center p-4">
-          <div className="bg-white rounded-lg p-6 max-w-2xl w-full">
-            <h2 className="text-xl font-semibold mb-4">
-              {selectedWarehouse ? "Edit Warehouse" : "Add Warehouse"}
-            </h2>
-            <WarehouseForm warehouse={selectedWarehouse} onClose={handleClose} />
-          </div>
-        </div>
-      )}
+     {isModalOpen && (
+  <div className="fixed inset-0 bg-gray-500 bg-opacity-75 flex items-center justify-center p-4 z-50">
+    <div className="bg-white rounded-lg p-6 max-w-2xl w-full max-h-[90vh] overflow-y-auto">
+      <h2 className="text-xl font-semibold mb-4">
+        {selectedCustomer ? "Edit Customer" : "Add Customer"}
+      </h2>
+      <CustomerForm customer={selectedCustomer} onClose={handleClose} />
+    </div>
+  </div>
+)}
+
 
       <div className="bg-white shadow rounded-lg overflow-hidden">
         <table className="min-w-full divide-y divide-gray-200">
@@ -157,4 +163,4 @@ const Warehouses = () => {
   );
 };
 
-export default Warehouses;
+export default Customers;

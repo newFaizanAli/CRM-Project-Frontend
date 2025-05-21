@@ -6,129 +6,100 @@ import {
   createColumnHelper,
   ColumnDef,
 } from "@tanstack/react-table";
-import useCategoriesStore from "../store/categories";
-import CategoryForm from "../components/CategoryForm";
-import { Category } from "../utilities/types";
+import { SaleOrder } from "../../utilities/types";
+import useSaleOrderStore from "../../store/sale-orders";
+import SaleOrderForm from "../../components/SaleOrderForm";
 
-const columnHelper = createColumnHelper<Category>();
+const columnHelper = createColumnHelper<SaleOrder>();
 
-// const columns = [
-//   columnHelper.accessor("name", {
-//     header: "Category Name",
-//     cell: (info) => info.getValue(),
-//   }),
-//   columnHelper.accessor("description", {
-//     header: "Description",
-//     cell: (info) => info.getValue(),
-//   }),
-//   columnHelper.accessor("parentCategory", {
-//     header: "Parent Category",
-//     cell: (info) => {
-//       const value = info.getValue();
-//       if (!value) return "-";
-//       if (typeof value === "string") return value;
-//       return value?.name ?? "-";
-//     },
-//   }),
-//   columnHelper.accessor("isActive", {
-//     header: "Status",
-//     cell: (info) => (info.getValue() ? "Active" : "Inactive"),
-//   }),
-// ];
-
-
-const columns: ColumnDef<Category, any>[] = [
-  columnHelper.accessor("name", {
-    header: "Category Name",
+const columns: ColumnDef<SaleOrder, any>[] = [
+  columnHelper.accessor("ID", {
+    header: "ID",
     cell: (info) => info.getValue(),
   }),
-  columnHelper.accessor("description", {
-    header: "Description",
+  columnHelper.accessor("customer.name", {
+    header: "Customer",
     cell: (info) => info.getValue(),
   }),
-  columnHelper.accessor("parentCategory", {
-    header: "Parent Category",
-    cell: (info) => {
-      const value = info.getValue();
-      if (!value) return "-";
-      if (typeof value === "string") return value;
-      return value?.name ?? "-";
-    },
+  columnHelper.accessor("deliveryDate", {
+    header: "Delivery Date",
+    cell: (info) => new Date(info.getValue()).toLocaleDateString(),
   }),
-  columnHelper.accessor("isActive", {
-    header: "Status",
-    cell: (info) => (info.getValue() ? "Active" : "Inactive"),
+ 
+  columnHelper.accessor("grandTotal", {
+    header: "Total Amount",
+    cell: (info) => `Rs. ${info.getValue().toLocaleString()}`,
   }),
 ];
 
-
-const Categories = () => {
+const SaleOrders = () => {
   const {
-    categories,
-    deleteCategory,
-    fetchCategories,
+    saleOrders,
+    deleteSaleOrder,
+    fetchSaleOrders,
     isFetched,
-  } = useCategoriesStore();
+  } = useSaleOrderStore();
 
   const [isModalOpen, setIsModalOpen] = useState(false);
-  const [selectedCategory, setSelectedCategory] = useState<Category | undefined>();
+  const [selectedOrder, setSelectedOrder] = useState<
+    SaleOrder | undefined
+  >();
 
   useEffect(() => {
     if (!isFetched) {
-      fetchCategories();
+      fetchSaleOrders();
     }
-  }, [isFetched, fetchCategories]);
+  }, [fetchSaleOrders, isFetched]);
 
   const table = useReactTable({
-    data: categories,
+    data: saleOrders,
     columns,
     getCoreRowModel: getCoreRowModel(),
   });
 
-  const handleDelete = (id: number) => {
-    if (confirm("Are you sure you want to delete this category?")) {
-      deleteCategory(id);
+  const handleDelete = (id: string) => {
+    if (
+      window.confirm("Are you sure you want to delete this sale order?")
+    ) {
+      deleteSaleOrder(String(id));
     }
   };
 
-  const handleEdit = (category: Category) => {
-    setSelectedCategory(category);
+  const handleEdit = (sale_order: SaleOrder) => {
+    setSelectedOrder(sale_order);
     setIsModalOpen(true);
   };
 
   const handleAdd = () => {
-    setSelectedCategory(undefined);
+    setSelectedOrder(undefined);
     setIsModalOpen(true);
   };
 
   const handleClose = () => {
-    setSelectedCategory(undefined);
     setIsModalOpen(false);
+    setSelectedOrder(undefined);
   };
 
   return (
     <div className="p-6">
-      {/* Header */}
       <div className="flex justify-between items-center mb-6">
-        <h1 className="text-2xl font-bold text-gray-900">Categories</h1>
+        <h1 className="text-2xl font-bold text-gray-900">Sales Orders</h1>
         <button onClick={handleAdd} className="btn btn-primary">
-          Add Category
+          Add Sale Order
         </button>
       </div>
 
-      {/* Modal */}
       {isModalOpen && (
-        <div className="fixed inset-0 bg-black bg-opacity-40 flex items-center justify-center z-50 p-4">
-          <div className="bg-white rounded-lg p-6 w-full max-w-xl">
+        <div className="fixed inset-0 bg-gray-500 bg-opacity-75 flex items-center justify-center p-4 z-50">
+          <div className="bg-white rounded-lg max-h-screen overflow-y-auto w-full max-w-3xl p-6">
             <h2 className="text-xl font-semibold mb-4">
-              {selectedCategory ? "Edit Category" : "Add Category"}
+              {selectedOrder ? "Edit Sale Order" : "Add Sale Order"}
             </h2>
-            <CategoryForm category={selectedCategory} onClose={handleClose} />
+            <SaleOrderForm order={selectedOrder} onClose={handleClose} />
           </div>
         </div>
       )}
 
-      {/* Table */}
       <div className="bg-white shadow rounded-lg overflow-hidden">
         <table className="min-w-full divide-y divide-gray-200">
           <thead className="bg-gray-50">
@@ -182,4 +153,4 @@ const Categories = () => {
   );
 };
 
-export default Categories;
+export default SaleOrders;

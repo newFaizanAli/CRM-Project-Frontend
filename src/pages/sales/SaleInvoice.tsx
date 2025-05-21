@@ -6,106 +6,113 @@ import {
   createColumnHelper,
   ColumnDef,
 } from "@tanstack/react-table";
-import useProductsStore from "../store/products";
-import ProductForm from "../components/ProductForm"; 
-import { Product } from "../utilities/types";
+import useSaleOrderStore from "../../store/sale-orders";
+import SaleOrderForm from "../../components/SaleOrderForm";
+import { SaleOrder } from "../../utilities/types";
 
+const columnHelper = createColumnHelper<SaleOrder>();
 
-
-const columnHelper = createColumnHelper<Product>();
-
-const columns: ColumnDef<Product, any>[] = [
-  columnHelper.accessor("name", {
-    header: "Product Name",
+const columns: ColumnDef<SaleOrder, any>[] = [
+  columnHelper.accessor("ID", {
+    header: "PO Number",
     cell: (info) => info.getValue(),
   }),
-  columnHelper.accessor("description", {
-    header: "Description",
+  columnHelper.accessor("customer.name", {
+    header: "Customer",
     cell: (info) => info.getValue(),
   }),
-  columnHelper.accessor("category", {
-    header: "Category",
-    cell: (info) => {
-      const value = info.getValue();
-      if (!value) return "-";
-      if (typeof value === "string") return value;
-      return value?.name ?? "-";
-    },
+  columnHelper.accessor("deliveryDate", {
+    header: "Delivery Date",
+    cell: (info) => new Date(info.getValue()).toLocaleDateString(),
   }),
-  columnHelper.accessor("isActive", {
+  columnHelper.accessor("status", {
     header: "Status",
-    cell: (info) => (info.getValue() ? "Active" : "Inactive"),
+    cell: (info) => (
+      <span className={`px-2 py-1 rounded-full text-xs ${
+        info.getValue() === "Completed" 
+          ? "bg-green-100 text-green-800" 
+          : info.getValue() === "Cancelled" 
+            ? "bg-red-100 text-red-800" 
+            : "bg-blue-100 text-blue-800"
+      }`}>
+        {info.getValue()}
+      </span>
+    ),
+  }),
+  columnHelper.accessor("grandTotal", {
+    header: "Total Amount",
+    cell: (info) => `Rs. ${info.getValue().toLocaleString()}`,
   }),
 ];
 
-const Products = () => {
+const SaleOrderPage = () => {
   const {
-    products,
-    deleteProduct,
-    fetchProducts,
+    saleOrders,
+    deleteSaleOrder,
+    fetchSaleOrders,
     isFetched,
-  } = useProductsStore();
+  } = useSaleOrderStore();
 
   const [isModalOpen, setIsModalOpen] = useState(false);
-  const [selectedProduct, setSelectedProduct] = useState<Product | undefined>();
+  const [selectedOrder, setSelectedOrder] = useState<
+    SaleOrder | undefined
+  >();
 
   useEffect(() => {
     if (!isFetched) {
-      fetchProducts();
+      fetchSaleOrders();
     }
-  }, [isFetched, fetchProducts]);
+  }, [fetchSaleOrders, isFetched]);
 
   const table = useReactTable({
-    data: products,
+    data: saleOrders,
     columns,
     getCoreRowModel: getCoreRowModel(),
   });
 
+  const handleDelete = (id: string) => {
+    if (
+      window.confirm("Are you sure you want to delete this sale order?")
+    ) {
+      deleteSaleOrder(String(id));
+    }
+  };
 
-  const handleDelete = (id?: string) => {
-  if (id && confirm("Are you sure you want to delete this product?")) {
-    deleteProduct(id.toString());
-  }
-};
-
-
-  const handleEdit = (product: Product) => {
-    setSelectedProduct(product);
+  const handleEdit = (pur_order: SaleOrder) => {
+    setSelectedOrder(pur_order);
     setIsModalOpen(true);
   };
 
   const handleAdd = () => {
-    setSelectedProduct(undefined);
+    setSelectedOrder(undefined);
     setIsModalOpen(true);
   };
 
   const handleClose = () => {
-    setSelectedProduct(undefined);
     setIsModalOpen(false);
+    setSelectedOrder(undefined);
   };
 
   return (
     <div className="p-6">
       <div className="flex justify-between items-center mb-6">
-        <h1 className="text-2xl font-bold text-gray-900">Products</h1>
+        <h1 className="text-2xl font-bold text-gray-900">Sale Orders</h1>
         <button onClick={handleAdd} className="btn btn-primary">
-          Add Product
+          Add Sale Order
         </button>
       </div>
 
-      {/* Modal */}
       {isModalOpen && (
-        <div className="fixed inset-0 bg-black bg-opacity-40 flex items-center justify-center z-50 p-4">
-          <div className="bg-white rounded-lg p-6 w-full max-w-xl">
+        <div className="fixed inset-0 bg-gray-500 bg-opacity-75 flex items-center justify-center p-4 z-50">
+          <div className="bg-white rounded-lg max-h-screen overflow-y-auto w-full max-w-3xl p-6">
             <h2 className="text-xl font-semibold mb-4">
-              {selectedProduct ? "Edit Product" : "Add Product"}
+              {selectedOrder ? "Edit Purchase Order" : "Add Purchase Order"}
             </h2>
-            <ProductForm product={selectedProduct} onClose={handleClose} />
+            <SaleOrderForm order={selectedOrder} onClose={handleClose} />
           </div>
         </div>
       )}
 
-      {/* Table */}
       <div className="bg-white shadow rounded-lg overflow-hidden">
         <table className="min-w-full divide-y divide-gray-200">
           <thead className="bg-gray-50">
@@ -159,4 +166,4 @@ const Products = () => {
   );
 };
 
-export default Products;
+export default SaleOrderPage;

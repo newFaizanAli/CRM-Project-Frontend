@@ -55,3 +55,20 @@ export const purchaseInvoicesStatus = [
     { label: "Paid", value: "Paid" },
   { label: "Cancelled", value: "Cancelled" },
 ];
+
+
+export const purchaseReturnsStatus = [
+  { label: "Draft", value: "Draft" },
+  { label: "Submitted", value: "Submitted" },
+  { label: "Cancelled", value: "Cancelled" },
+];
+
+
+
+
+export const saleOrderStatus = [
+  { label: "Pending", value: "Pending" },
+  { label: "Partially Delivered", value: "Partially Delivered" },
+  { label: "Delivered", value: "Delivered" },
+  { label: "Cancelled", value: "Cancelled" },
+];

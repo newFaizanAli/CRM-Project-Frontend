@@ -6,123 +6,115 @@ import {
   createColumnHelper,
   ColumnDef,
 } from "@tanstack/react-table";
+import { PurchaseInvoice } from "../../utilities/types";
+import PurchaseInvoiceForm from "../../components/PurchaseInvoiceForm";
+import usePurchaseInvoiceStore from "../../store/purchase-invoices";
 
-import useStockEntryStore from "../store/stock_entry";
-import StockEntryForm from "../components/StockEntryForm";
-import { StockEntry } from "../utilities/types";
+const columnHelper = createColumnHelper<PurchaseInvoice>();
 
-const columnHelper = createColumnHelper<StockEntry>();
-
-const columns: ColumnDef<StockEntry, any>[] = [
+const columns: ColumnDef<PurchaseInvoice, any>[] = [
   columnHelper.accessor("ID", {
     header: "ID",
     cell: (info) => info.getValue(),
   }),
-  columnHelper.accessor("product", {
-    header: "Product",
-    cell: (info) => {
-      const value = info.getValue();
-      return typeof value === "object" ? value?.name ?? "-" : value || "-";
-    },
-  }),
-  columnHelper.accessor("entryType", {
-    header: "Entry Type",
-    cell: (info) => info.getValue() || "-",
-  }),
-  columnHelper.accessor("entryDate", {
-    header: "Expire Date",
-    cell: (info) => {
-      const date = info.getValue();
-      return date ? new Date(date).toLocaleDateString() : "-";
-    },
-  }),
-  columnHelper.accessor("quantity", {
-    header: "Quantity",
+
+  columnHelper.accessor((row) => row.purchaseReceipt?.ID || "-", {
+    id: "purchaseOrderId",
+    header: "Receipt ID",
     cell: (info) => info.getValue(),
   }),
-  columnHelper.accessor("rate", {
-    header: "Rate",
+  columnHelper.accessor((row) => row.supplier?.name || "-", {
+    id: "supplierName",
+    header: "Supplier",
     cell: (info) => info.getValue(),
   }),
-  columnHelper.accessor("total", {
-    header: "Total",
+  columnHelper.accessor("invoiceDate", {
+    header: "Invoice Date",
+    cell: (info) => new Date(info.getValue()).toLocaleDateString(),
+  }),
+  columnHelper.accessor("status", {
+    header: "Status",
     cell: (info) => info.getValue(),
   }),
-  columnHelper.accessor("warehouse", {
-    header: "Warehouse",
-    cell: (info) => {
-      const value = info.getValue();
-      return typeof value === "object" ? value?.name ?? "-" : value || "-";
-    },
-  }),
+  columnHelper.accessor("stockEntered", {
+  header: "Stock Entered",
+  cell: (info) => (info.getValue() ? "Yes" : "No"), // or use icons: info.getValue() ? "✅" : "❌"
+}),
 ];
 
-const StockEntryPage = () => {
+const PurchaseInvoices = () => {
   const {
-    stockentry: stockEntries,
-    deleteStockEntry,
-    fetchStockEntries,
+    purchaseInvoices,
+    deletePurchaseInvoice,
+    fetchPurchaseInvoices,
     isFetched,
-  } = useStockEntryStore();
+  } = usePurchaseInvoiceStore();
 
   const [isModalOpen, setIsModalOpen] = useState(false);
-  const [selectedEntry, setSelectedEntry] = useState<StockEntry | undefined>();
+  const [selectedReceipt, setSelectedReceipt] = useState<
+    PurchaseInvoice | undefined
+  >();
 
   useEffect(() => {
     if (!isFetched) {
-      fetchStockEntries();
+      fetchPurchaseInvoices();
     }
-  }, [isFetched, fetchStockEntries]);
+  }, [fetchPurchaseInvoices, isFetched]);
 
   const table = useReactTable({
-    data: stockEntries,
+    data: purchaseInvoices,
     columns,
     getCoreRowModel: getCoreRowModel(),
   });
 
-  const handleDelete = (id?: string) => {
-    if (id && confirm("Are you sure you want to delete this stock entry?")) {
-      deleteStockEntry(id.toString());
+  const handleDelete = (id: string) => {
+    if (
+      window.confirm("Are you sure you want to delete this purchase invoice?")
+    ) {
+      deletePurchaseInvoice(String(id));
     }
   };
 
-  const handleEdit = (entry: StockEntry) => {
-    setSelectedEntry(entry);
+  const handleEdit = (pur_inv: PurchaseInvoice) => {
+    setSelectedReceipt(pur_inv);
     setIsModalOpen(true);
   };
 
   const handleAdd = () => {
-    setSelectedEntry(undefined);
+    setSelectedReceipt(undefined);
     setIsModalOpen(true);
   };
 
   const handleClose = () => {
-    setSelectedEntry(undefined);
     setIsModalOpen(false);
+    setSelectedReceipt(undefined);
   };
 
   return (
     <div className="p-6">
       <div className="flex justify-between items-center mb-6">
-        <h1 className="text-2xl font-bold text-gray-900">Stock Entries</h1>
+        <h1 className="text-2xl font-bold text-gray-900">Purchase Invoices</h1>
         <button onClick={handleAdd} className="btn btn-primary">
-          Add Stock Entry
+          Add Purchase Invoice
         </button>
       </div>
 
-      {/* Modal */}
       {isModalOpen && (
-        <div className="fixed inset-0 bg-black bg-opacity-40 flex items-center justify-center z-50 p-4">
-          <div className="bg-white rounded-lg p-6 w-full max-w-xl">
+        <div className="fixed inset-0 bg-gray-500 bg-opacity-75 flex items-center justify-center p-4 z-50">
+          <div className="bg-white rounded-lg max-h-screen overflow-y-auto w-full max-w-3xl p-6">
             <h2 className="text-xl font-semibold mb-4">
-              {selectedEntry ? "Edit Stock Entry" : "Add Stock Entry"}
+              {selectedReceipt
+                ? "Edit Purchase Invoice"
+                : "Add Purchase Invoice"}
             </h2>
-            <StockEntryForm stockentry={selectedEntry} onClose={handleClose} />
+            <PurchaseInvoiceForm
+              invoice={selectedReceipt}
+              onClose={handleClose}
+            />
           </div>
         </div>
       )}
 
-      {/* Table */}
       <div className="bg-white shadow rounded-lg overflow-hidden">
         <table className="min-w-full divide-y divide-gray-200">
           <thead className="bg-gray-50">
@@ -161,7 +153,7 @@ const StockEntryPage = () => {
                     Edit
                   </button>
                   <button
-                    onClick={() => handleDelete(String(row.original._id))}
+                    onClick={() => handleDelete(row.original._id)}
                     className="text-red-600 hover:text-red-900"
                   >
                     Delete
@@ -176,4 +168,4 @@ const StockEntryPage = () => {
   );
 };
 
-export default StockEntryPage;
+export default PurchaseInvoices;
