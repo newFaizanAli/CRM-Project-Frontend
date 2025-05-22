@@ -1,8 +1,10 @@
 //  const fullUrl = `http://localhost:8000${url}`;
+
+
 // export const ProjectURL = `http://localhost:3000`;
 
 // Project Url
-
+// vecel url
 export const ProjectURL = `https://crm-project-backend-mu.vercel.app`;
 
 export const unitTypes = [
