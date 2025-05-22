@@ -12,9 +12,9 @@ import PurchaseLayout from "./components/Layout/PurchaseLayout";
 import StockLayout from "./components/Layout/StockLayout";
 import SaleLayout from "./components/Layout/SaleLayout";
 
-import PurchaseDashboard from "./pages/dashboard/PurchaseDashboard";
-import StockDashboard from "./pages/dashboard/StockDashboard";
-import SaleDashboard from "./pages/dashboard/SaleDashboard";
+import PurchaseDashboard from "./pages/PurchaseDashboard";
+import StockDashboard from "./pages/StockDashboard";
+import SaleDashboard from "./pages/SaleDashboard";
 
 import ProtectedRoute from "./components/ProtectedRoute";
 import Login from "./pages/Login";
