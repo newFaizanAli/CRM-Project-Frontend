@@ -7,11 +7,11 @@ import {
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import ToastProvider from "./components/ToastProvider";
 
-import Layout from "./components/layout/Layout";
-import PurchaseLayout from "./components/layout/PurchaseLayout";
-import StockLayout from "./components/layout/StockLayout";
-import SaleLayout from "./components/layout/SaleLayout";
-import AccountLayout from "./components/layout/AccountLayout";
+import Layout from "./components/Layout/Layout";
+import PurchaseLayout from "./components/Layout/PurchaseLayout";
+import StockLayout from "./components/Layout/StockLayout";
+import SaleLayout from "./components/Layout/SaleLayout";
+import AccountLayout from "./components/Layout/AccountLayout";
 
 import PurchaseDashboard from "./pages/PurchaseDashboard";
 import StockDashboard from "./pages/StockDashboard";
