@@ -39,6 +39,6 @@ const stockModules = [
 
 export default function StockDashboard() {
   return (
-    <DashboardWidgets data={stockModules} />
+    <DashboardWidgets data={stockModules} title={'Stocks'} />
   );
 }

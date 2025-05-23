@@ -36,6 +36,6 @@ const purchaseModules = [
 ];
 export default function PurchaseDashboard() {
   return (
-    <DashboardWidgets data={purchaseModules} />
+    <DashboardWidgets data={purchaseModules} title={'Purchases'} />
   );
 }

@@ -502,3 +502,43 @@ export type SaleReturnFormData = Omit<
 export type SaleReturnFormWithId = SaleReturnFormData & {
   _id: string;
 };
+
+
+// --------- Transaction -----------
+
+export type TransactionType = "payment" | "receipt"; 
+export type TransactionMethod = "cash" | "bank";
+export type TransactionPartyType = "customers" | "suppliers";
+export type TransactionReferenceModel = "purchase-invoice" | "sales-invoice";
+
+export interface Transaction {
+  _id?: string;
+  ID?: string;
+  type: TransactionType;
+  method: TransactionMethod;
+  amount: number;
+  date?: string;
+  partyType: TransactionPartyType;
+  party: {
+    _id: string;
+    name: string;
+  };
+  referenceInvoice?: {
+    _id: string;
+    ID: string;
+  };
+  referenceModel?: TransactionReferenceModel;
+  notes?: string;
+}
+
+export type TransactionFormData = Omit<
+  Transaction,
+  "_id" | "createdAt" | "updatedAt" | "party" | "createdBy" | "referenceInvoice"
+> & {
+  party: string; 
+  referenceInvoice?: string;
+};
+
+export type TransactionWithId = TransactionFormData & {
+  _id: string;
+};

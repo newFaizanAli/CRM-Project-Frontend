@@ -19,6 +19,7 @@ import useCustomerStore from "../store/customers";
 import useSaleOrderStore from "../store/sale-orders";
 import useSaleInvoiceStore from "../store/sale-invoice";
 import useSalesReturnStore from "../store/sale-return";
+import useTransactionStore from "../store/transactions";
 
 const useInitialData = () => {
   const { fetchDeals } = useDealsStore();
@@ -50,6 +51,9 @@ const useInitialData = () => {
   const { fetchSaleInvoices } = useSaleInvoiceStore();
   const { fetchSalesReturns } = useSalesReturnStore();
 
+    const { fetchTransactions } = useTransactionStore();
+
+
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
@@ -78,6 +82,8 @@ const useInitialData = () => {
         fetchSaleOrders(),
         fetchSaleInvoices(),
         fetchSalesReturns(),
+
+        fetchTransactions(),
       ]);
       setLoading(false);
     };

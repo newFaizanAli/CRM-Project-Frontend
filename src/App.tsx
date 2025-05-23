@@ -50,10 +50,11 @@ import SaleOrderPage from "./pages/sales/SaleOrder";
 import SaleInvoicePage from "./pages/sales/SaleInvoice";
 import SaleReturnPage from "./pages/sales/SaleReturn";
 // Transaction
-import Transactions from "./pages/account/Transactions";
+import TransactionPage from "./pages/account/Transactions";
 import PaymentVoucher from "./pages/account/PaymentVoucher";
 import ReceiptVoucher from "./pages/account/ReceiptVoucher";
 import AccountDashboard from "./pages/AccountDashboard";
+import AccountLedger from "./pages/account/AccountLedger";
 
 const queryClient = new QueryClient();
 
@@ -69,6 +70,7 @@ function App() {
           <Route element={<ProtectedRoute />}>
             <Route element={<Layout />}>
               <Route path="/dashboard" element={<Dashboard />} />
+
               <Route path="/contacts" element={<Contacts />} />
               <Route path="/leads" element={<Leads />} />
               <Route path="/deals" element={<Deals />} />
@@ -103,9 +105,10 @@ function App() {
 
               <Route path="/account" element={<AccountLayout />}>
                 <Route index element={<AccountDashboard />} />
-                <Route path="transactions" element={<Transactions />} />
+                <Route path="transactions" element={<TransactionPage />} />
                 <Route path="payments" element={<PaymentVoucher />} />
                 <Route path="receipts" element={<ReceiptVoucher />} />
+                <Route path="ledgers" element={<AccountLedger />} />
               </Route>
 
               <Route path="/calendar" element={<Calendar />} />

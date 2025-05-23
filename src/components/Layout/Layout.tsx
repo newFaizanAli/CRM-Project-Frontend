@@ -28,10 +28,10 @@ const Layout = () => {
     { path: "/deals", label: "Deals", icon: CurrencyDollarIcon },
     { path: "/tasks", label: "Tasks", icon: ClipboardDocumentListIcon },
     { path: "/employees", label: "Employees", icon: IdentificationIcon },
-    { path: "/account", label: "Account", icon: BuildingLibraryIcon },
-    { path: "/stock", label: "Stock", icon: CubeIcon },
-    { path: "/purchase", label: "Purchase", icon: ShoppingCartIcon },
-    { path: "/sale", label: "Sale", icon: BanknotesIcon },
+    { path: "/account", label: "Accounts", icon: BuildingLibraryIcon },
+    { path: "/stock", label: "Stocks", icon: CubeIcon },
+    { path: "/purchase", label: "Purchases", icon: ShoppingCartIcon },
+    { path: "/sale", label: "Sales", icon: BanknotesIcon },
   ];
 
   if (loading) {

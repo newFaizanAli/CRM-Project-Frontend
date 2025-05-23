@@ -30,5 +30,5 @@ const saleModules = [
 ];
 
 export default function SaleDashboard() {
-  return <DashboardWidgets data={saleModules} />;
+  return <DashboardWidgets data={saleModules} title={'Sales'} />;
 }
