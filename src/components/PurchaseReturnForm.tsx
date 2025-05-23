@@ -5,7 +5,7 @@ import useProductsStore from "../store/products";
 import useSupplierStore from "../store/suppliers";
 import usePurchaseReceiptStore from "../store/purchase-receipts";
 import { PurchaseReturnFormData, PurchaseReturnItem } from "../utilities/types";
-import { purchaseReturnsStatus } from "../utilities/const";
+import { receiptStatus } from "../utilities/const";
 
 interface PurchaseReturnFormProps {
   pur_return?: any;
@@ -300,11 +300,11 @@ const PurchaseReturnForm = ({
         <div>
           <label>Status</label>
           <select
-            {...register("status", { required: "Status is required" })}
+            {...register("status", { required: "Status is required" })} 
             className="input w-full"
           >
             <option value="">-- Select Status --</option>
-            {purchaseReturnsStatus.map((en_t) => (
+            {receiptStatus.map((en_t) => (
               <option key={en_t.value} value={en_t.value}>
                 {en_t.label}
               </option>

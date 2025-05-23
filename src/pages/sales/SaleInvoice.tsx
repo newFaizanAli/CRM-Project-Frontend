@@ -6,99 +6,103 @@ import {
   createColumnHelper,
   ColumnDef,
 } from "@tanstack/react-table";
-import useSaleOrderStore from "../../store/sale-orders";
-import SaleOrderForm from "../../components/SaleOrderForm";
-import { SaleOrder } from "../../utilities/types";
+import { SaleInvoice } from "../../utilities/types";
+import useSaleInvoiceStore from "../../store/sale-invoice";
+import SaleInvoiceForm from "../../components/SaleInvoiceForm";
 
-const columnHelper = createColumnHelper<SaleOrder>();
+const columnHelper = createColumnHelper<SaleInvoice>();
 
-const columns: ColumnDef<SaleOrder, any>[] = [
+const columns: ColumnDef<SaleInvoice, any>[] = [
   columnHelper.accessor("ID", {
-    header: "PO Number",
+    header: "ID",
     cell: (info) => info.getValue(),
   }),
-  columnHelper.accessor("customer.name", {
-    header: "Customer",
+
+  columnHelper.accessor((row) => row.saleOrder?.ID || "-", {
+    id: "saleOrderId",
+    header: "Order ID",
     cell: (info) => info.getValue(),
   }),
-  columnHelper.accessor("deliveryDate", {
-    header: "Delivery Date",
+  columnHelper.accessor((row) => row.customer?.name || "-", {
+    id: "customerName",
+    header: "Supplier",
+    cell: (info) => info.getValue(),
+  }),
+  columnHelper.accessor("invoiceDate", {
+    header: "Invoice Date",
     cell: (info) => new Date(info.getValue()).toLocaleDateString(),
   }),
   columnHelper.accessor("status", {
     header: "Status",
-    cell: (info) => (
-      <span className={`px-2 py-1 rounded-full text-xs ${
-        info.getValue() === "Completed" 
-          ? "bg-green-100 text-green-800" 
-          : info.getValue() === "Cancelled" 
-            ? "bg-red-100 text-red-800" 
-            : "bg-blue-100 text-blue-800"
-      }`}>
-        {info.getValue()}
-      </span>
-    ),
+    cell: (info) => info.getValue(),
   }),
-  columnHelper.accessor("grandTotal", {
-    header: "Total Amount",
-    cell: (info) => `Rs. ${info.getValue().toLocaleString()}`,
+  
+  columnHelper.accessor((row) => row.warehouse?.name || "-", {
+    id: "warehouseName",
+    header: "Warehouse",
+    cell: (info) => info.getValue(),
+  }),
+  columnHelper.accessor("stockEntered", {
+    header: "Stock Entered",
+    cell: (info) => (info.getValue() ? "Yes" : "No"),
   }),
 ];
 
-const SaleOrderPage = () => {
+const SaleInvoicePage = () => {
+
   const {
-    saleOrders,
-    deleteSaleOrder,
-    fetchSaleOrders,
+    saleInvoices,
+    deleteSaleInvoice,
+    fetchSaleInvoices,
     isFetched,
-  } = useSaleOrderStore();
+  } = useSaleInvoiceStore();
 
   const [isModalOpen, setIsModalOpen] = useState(false);
-  const [selectedOrder, setSelectedOrder] = useState<
-    SaleOrder | undefined
+  const [selectedInvoice, setSelectedInvoice] = useState<
+    SaleInvoice | undefined
   >();
 
   useEffect(() => {
     if (!isFetched) {
-      fetchSaleOrders();
+      fetchSaleInvoices();
     }
-  }, [fetchSaleOrders, isFetched]);
+  }, [fetchSaleInvoices, isFetched]);
 
   const table = useReactTable({
-    data: saleOrders,
+    data: saleInvoices,
     columns,
     getCoreRowModel: getCoreRowModel(),
   });
 
   const handleDelete = (id: string) => {
     if (
-      window.confirm("Are you sure you want to delete this sale order?")
+      window.confirm("Are you sure you want to delete this sale invoice?")
     ) {
-      deleteSaleOrder(String(id));
+      deleteSaleInvoice(String(id));
     }
   };
 
-  const handleEdit = (pur_order: SaleOrder) => {
-    setSelectedOrder(pur_order);
+  const handleEdit = (sale_inv: SaleInvoice) => {
+    setSelectedInvoice(sale_inv);
     setIsModalOpen(true);
   };
 
   const handleAdd = () => {
-    setSelectedOrder(undefined);
+    setSelectedInvoice(undefined);
     setIsModalOpen(true);
   };
 
   const handleClose = () => {
     setIsModalOpen(false);
-    setSelectedOrder(undefined);
+    setSelectedInvoice(undefined);
   };
 
   return (
     <div className="p-6">
       <div className="flex justify-between items-center mb-6">
-        <h1 className="text-2xl font-bold text-gray-900">Sale Orders</h1>
+        <h1 className="text-2xl font-bold text-gray-900">Sale Invoices</h1>
         <button onClick={handleAdd} className="btn btn-primary">
-          Add Sale Order
+          Add Sale Invoice
         </button>
       </div>
 
@@ -106,9 +110,14 @@ const SaleOrderPage = () => {
         <div className="fixed inset-0 bg-gray-500 bg-opacity-75 flex items-center justify-center p-4 z-50">
           <div className="bg-white rounded-lg max-h-screen overflow-y-auto w-full max-w-3xl p-6">
             <h2 className="text-xl font-semibold mb-4">
-              {selectedOrder ? "Edit Purchase Order" : "Add Purchase Order"}
+              {selectedInvoice
+                ? "Edit Sale Invoice"
+                : "Add Sale Invoice"}
             </h2>
-            <SaleOrderForm order={selectedOrder} onClose={handleClose} />
+            <SaleInvoiceForm
+              invoice={selectedInvoice}
+              onClose={handleClose}
+            />
           </div>
         </div>
       )}
@@ -166,4 +175,4 @@ const SaleOrderPage = () => {
   );
 };
 
-export default SaleOrderPage;
+export default SaleInvoicePage;

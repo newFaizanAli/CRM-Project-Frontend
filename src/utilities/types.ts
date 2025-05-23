@@ -313,6 +313,7 @@ export interface PurchaseReturn {
   status: PurchaseReturnStatus;
   reason: string;
   items: PurchaseReturnItem[];
+  
 }
 
 export type PurchaseReturnFormData = Omit<
@@ -406,3 +407,98 @@ export type SaleOrderFormData = Omit<
 
 export type SaleOrderFormWithId = SaleOrderFormData & { _id: string };
 
+
+
+// --------- Sale Invoice-----------
+
+export interface SaleInvoiceItem {
+  productName: string;
+  product: string;
+  quantity: number;
+  rate: number;
+  amount: number;
+  maxQty: number;
+}
+
+export type SaleInvoiceStatus =
+  | "Unpaid"
+  | "Partially Paid"
+  | "Paid"
+  | "Cancelled";
+
+export interface SaleInvoice {
+  _id?: string;
+  ID?: string;
+  saleOrder: {
+    _id: string;
+    ID: string;
+  };
+  customer: {
+    _id: string;
+    name: string;
+  };
+   warehouse: {
+    _id: string;
+    name: string;
+    location: string;
+  };
+  invoiceDate?: string;
+  dueDate?: string;
+  status: SaleInvoiceStatus;
+  remarks: string;
+  stockEntered: boolean;
+  items: SaleInvoiceItem[];
+  totalAmount: number;
+}
+
+export type SaleInvoiceFormData = Omit<
+  SaleInvoice,
+  "_id" | "createdAt" | "updatedAt"
+>;
+
+export type SaleInvoiceFormWithId = SaleInvoiceFormData & {
+  _id: string;
+};
+
+
+// --------- Sale Receipt-----------
+
+export interface SaleReturnItem {
+  productName: string;
+  product: string;
+  quantity: number;
+  rate: number;
+  amount: number;
+  maxQty: number;
+}
+
+export type SaleReturnStatus =
+  | "Pending"
+  | "Accepted"
+  | "Rejetected"; 
+
+export interface SaleReturn {
+  _id?: string;
+  saleInvoice: {
+    _id: string;
+    ID: string;
+  };
+  customer: {
+    _id: string;
+    name: string;
+  };
+  returnDate?: string;
+  status: SaleReturnStatus;
+  reason: string;
+  items: SaleReturnItem[];
+  stockEntered: boolean;
+}
+
+export type SaleReturnFormData = Omit<
+  SaleReturn,
+  "_id" | "createdAt" | "updatedAt"
+>;
+
+export type SaleReturnFormWithId = SaleReturnFormData & {
+  _id: string;
+};

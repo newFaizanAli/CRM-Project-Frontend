@@ -6,7 +6,7 @@ import {
 } from "../utilities/types";
 import useProductsStore from "../store/products";
 import useSupplierStore from "../store/suppliers";
-import { purchaseReceiptStatus } from "../utilities/const";
+import { receiptStatus } from "../utilities/const";
 import usePurchaseReceiptStore from "../store/purchase-receipts";
 import useWarehouseStore from "../store/warehouse";
 import usePurchaseOrderStore from "../store/purchase-orders";
@@ -57,8 +57,8 @@ const PurchaseReceiptForm = ({
           totalAmount: receipt.totalAmount || 0,
           remarks: receipt.remarks || "",
           status: receipt.status || "Draft",
-          warehouse: receipt.warehouse?._id || "", // fix yeh hai
-          purchaseOrder: receipt.purchaseOrder?._id || "", // fix yeh hai
+          warehouse: receipt.warehouse?._id || "", 
+          purchaseOrder: receipt.purchaseOrder?._id || "", 
         }
       : {
           supplier: "",
@@ -325,7 +325,7 @@ const PurchaseReceiptForm = ({
             className="input w-full"
           >
             <option value="">-- Select Status --</option>
-            {purchaseReceiptStatus.map((en_t) => (
+            {receiptStatus.map((en_t) => (
               <option key={en_t.value} value={en_t.value}>
                 {en_t.label}
               </option>

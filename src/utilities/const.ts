@@ -16,13 +16,13 @@ export const unitTypes = [
   { label: "Packet", value: "pkt" },
   { label: "Dozen", value: "dozen" },
   { label: "Meter", value: "m" },
-  { label: "Centimeter", value: "cm" },
+  { label: "Centimeter", value: "cm" }, 
   { label: "Inch", value: "inch" },
   { label: "Foot", value: "ft" },
-  { label: "Roll", value: "roll" },
+  { label: "Roll", value: "roll" }, 
   { label: "Bag", value: "bag" },
   { label: "Carton", value: "carton" },
-  { label: "Can", value: "can" },
+  { label: "Can", value: "can" }, 
   { label: "Bottle", value: "bottle" },
   { label: "Tray", value: "tray" },
 ];
@@ -43,28 +43,19 @@ export const purchaseOrderStatus = [
 ];
 
 
-export const purchaseReceiptStatus = [
+export const receiptStatus = [
   { label: "Draft", value: "Draft" },
   { label: "Received", value: "Received" },
   { label: "Cancelled", value: "Cancelled" },
 ];
 
 
-export const purchaseInvoicesStatus = [
-  { label: "Unpaid", value: "Unpaid" },
+export const invoicesStatus = [
+  { label: "Unpaid", value: "Unpaid" }, 
   { label: "Partially Paid", value: "Partially Paid" },
     { label: "Paid", value: "Paid" },
   { label: "Cancelled", value: "Cancelled" },
 ];
-
-
-export const purchaseReturnsStatus = [
-  { label: "Draft", value: "Draft" },
-  { label: "Submitted", value: "Submitted" },
-  { label: "Cancelled", value: "Cancelled" },
-];
-
-
 
 
 export const saleOrderStatus = [
@@ -72,4 +63,10 @@ export const saleOrderStatus = [
   { label: "Partially Delivered", value: "Partially Delivered" },
   { label: "Delivered", value: "Delivered" },
   { label: "Cancelled", value: "Cancelled" },
+];
+
+export const saleReturnStatus = [
+  { label: "Pending", value: "Pending" },
+  { label: "Accepted", value: "Accepted" },
+  { label: "Rejected", value: "Rejected" },
 ];

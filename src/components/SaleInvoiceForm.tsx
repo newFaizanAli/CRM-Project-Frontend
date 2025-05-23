@@ -1,29 +1,27 @@
 import { useForm } from "react-hook-form";
 import { useEffect, useState } from "react";
 import {
-  PurchaseInvoiceFormData,
-  PurchaseInvoiceItem,
+  SaleInvoiceFormData,
+  SaleInvoiceItem,
 } from "../utilities/types";
 import useProductsStore from "../store/products";
-import useSupplierStore from "../store/suppliers";
-import { invoicesStatus } from "../utilities/const";
-import usePurchaseReceiptStore from "../store/purchase-receipts";
-import usePurchaseInvoiceStore from "../store/purchase-invoices";
+import {  invoicesStatus } from "../utilities/const";
+import useSaleInvoiceStore from "../store/sale-invoice";
+import useSaleOrderStore from "../store/sale-orders";
+import useCustomerStore from "../store/customers";
+import useWarehouseStore from "../store/warehouse";
 
-interface PurchaseInvoiceFormProps {
+interface SaleInvoiceFormProps {
   invoice?: any;
   onClose: () => void;
 }
 
-const PurchaseInvoiceForm = ({
-  invoice,
-  onClose,
-}: PurchaseInvoiceFormProps) => {
-  const { addPurchaseInvoice, updatePurchaseInvoice } =
-    usePurchaseInvoiceStore();
+const SaleInvoiceForm = ({ invoice, onClose }: SaleInvoiceFormProps) => {
+  const { addSaleInvoice, updateSaleInvoice } = useSaleInvoiceStore();
   const { products } = useProductsStore();
-  const { suppliers } = useSupplierStore();
-  const { purchaseReceipts } = usePurchaseReceiptStore();
+  const { customers } = useCustomerStore();
+  const { saleOrders } = useSaleOrderStore();
+   const { warehouses } = useWarehouseStore();
 
   const initialItems =
     invoice?.items?.map((item: any) => {
@@ -34,11 +32,11 @@ const PurchaseInvoiceForm = ({
         rate: item.rate,
         amount: item.amount || item.rate * (item.quantity ?? 1),
         productName: fullProduct?.name || "Unknown",
-        maxQty: (item.receivedQty || item.quantity) ?? 1,
+        maxQty: (item.quantity || item.quantity) ?? 1,
       };
     }) || [];
 
-  const [items, setItems] = useState<PurchaseInvoiceItem[]>(initialItems);
+  const [items, setItems] = useState<SaleInvoiceItem[]>(initialItems);
   const [totalAmount, setTotalAmount] = useState(0);
 
   const {
@@ -47,65 +45,66 @@ const PurchaseInvoiceForm = ({
     setValue,
     watch,
     formState: { errors },
-  } = useForm<PurchaseInvoiceFormData>({
+  } = useForm<SaleInvoiceFormData>({
     defaultValues: invoice
       ? {
-          supplier: invoice.supplier?._id || "",
+          customer: invoice.customer?._id || "",
           invoiceDate: invoice.invoiceDate?.slice(0, 10) || "",
           totalAmount: invoice.totalAmount || 0,
           remarks: invoice.remarks || "",
-          status: invoice.status || "Draft",
-          purchaseReceipt: invoice.purchaseReceipt?._id || "",
+          status: invoice.status || "Unpaid",
+          saleOrder: invoice.saleOrder?._id || "",
           stockEntered: invoice.stockEntered || false,
+          warehouse: invoice.warehouse?._id || "", 
         }
       : {
-          supplier: "",
-          invoiceDate: "",
+          customer: "",
+          invoiceDate: new Date().toISOString().slice(0, 10),
           totalAmount: 0,
           remarks: "",
           status: "Unpaid",
-          purchaseReceipt: "",
+          saleOrder: "",
           stockEntered: false,
+          warehouse: "", 
         },
   });
 
-  const purchaseReceiptId = watch("purchaseReceipt") || "";
+  const saleOrderId = watch("saleOrder") || "";
 
   useEffect(() => {
     // Clear items when no receipt is selected
-    if (!purchaseReceiptId) {
-      
+    if (!saleOrderId) {
       setItems([]);
       return;
     }
 
-    if (typeof purchaseReceiptId === "string" && purchaseReceiptId) {
-      const selectedReceipt = [...(purchaseReceipts as any)].find(
-        (receipt: any) => receipt._id === purchaseReceiptId
+    if (typeof saleOrderId === "string" && saleOrderId) {
+      const selectedOrder = [...(saleOrders as any)].find(
+        (order: any) => order._id === saleOrderId
       );
 
-      if (selectedReceipt) {
+      if (selectedOrder) {
         // Set the supplier if available
-        if (selectedReceipt.supplier?._id) {
-          setValue("supplier", selectedReceipt.supplier._id);
+        if (selectedOrder.customer?._id) {
+          setValue("customer", selectedOrder.customer._id);
         }
 
         // Process items only if we have them
-        if (selectedReceipt.items?.length) {
-          const newItems = selectedReceipt.items.map((item: any) => {
+        if (selectedOrder.items?.length) {
+          const newItems = selectedOrder.items.map((item: any) => {
             // Handle both cases where product might be object or just ID
             const productId = item.product?._id || item.product;
             const product = products.find((p) => p._id === productId);
 
-            const receivedQty = item.receivedQty || item.quantity || 1;
+            const orderQty = item.quantity || item.quantity || 1;
             const itemRate = item.rate || product?.sellingPrice || 0;
 
             return {
               product: productId,
-              quantity: receivedQty,
+              quantity: orderQty,
               rate: itemRate,
-              amount: itemRate * receivedQty,
-              maxQty: receivedQty,
+              amount: itemRate * orderQty,
+              maxQty: orderQty,
               productName: item.product?.name || product?.name || "Unknown",
             };
           });
@@ -116,7 +115,7 @@ const PurchaseInvoiceForm = ({
         }
       }
     }
-  }, [purchaseReceiptId, purchaseReceipts, setValue, products, invoice]);
+  }, [saleOrderId, saleOrders, setValue, products, invoice]);
 
   useEffect(() => {
     const total = items.reduce((sum, item) => sum + item.amount, 0);
@@ -129,7 +128,7 @@ const PurchaseInvoiceForm = ({
     const product = products.find((p) => p._id === productId);
     if (!product) return;
 
-    const newItem: PurchaseInvoiceItem = {
+    const newItem: SaleInvoiceItem = {
       product: product._id,
       quantity: 1,
       rate: product.sellingPrice,
@@ -154,7 +153,7 @@ const PurchaseInvoiceForm = ({
       const maxQty = item.maxQty || item.quantity;
       if (value > maxQty) {
         alert(
-          `Quantity ${value} cannot be exceed from order received quantity (${maxQty}) se`
+          `Quantity ${value} cannot be exceed from order order quantity (${maxQty}) se`
         );
         return;
       }
@@ -171,12 +170,12 @@ const PurchaseInvoiceForm = ({
     setItems(updated);
   };
 
-  const onSubmit = (data: PurchaseInvoiceFormData) => {
+  const onSubmit = (data: SaleInvoiceFormData) => {
     const finalData = { ...data, items };
     if (invoice) {
-      updatePurchaseInvoice(invoice._id, finalData);
+      updateSaleInvoice(invoice._id, finalData);
     } else {
-      addPurchaseInvoice(finalData);
+      addSaleInvoice(finalData);
     }
     onClose();
   };
@@ -185,39 +184,57 @@ const PurchaseInvoiceForm = ({
     <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
       <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
         <div>
-          <label>Purchase Order</label>
+          <label>Sale Order</label>
           <select
-            {...register("purchaseReceipt", { required: "Recept is required" })}
+            {...register("saleOrder", { required: "Recept is required" })}
             className="input w-full"
           >
             <option value="">-- Select Order --</option>
-            {purchaseReceipts.map((order) => (
+            {saleOrders.map((order) => (
               <option key={order._id} value={order._id}>
                 {order.ID}
               </option>
             ))}
           </select>
-          {errors.purchaseReceipt && (
-            <p className="text-red-500">{errors.purchaseReceipt.message}</p>
+          {errors.saleOrder && (
+            <p className="text-red-500">{errors.saleOrder.message}</p>
           )}
         </div>
 
         <div>
-          <label>Supplier</label>
+          <label>Customer</label>
           <select
-            {...register("supplier", { required: "Supplier is required" })}
+            {...register("customer", { required: "Customer is required" })}
             className="input w-full"
-            disabled={!!watch("purchaseReceipt")}
+            disabled={!!watch("customer")}
           >
-            <option value="">-- Select Supplier --</option>
-            {suppliers.map((supplier) => (
-              <option key={supplier._id} value={supplier._id}>
-                {supplier.name}
+            <option value="">-- Select Customer --</option>
+            {customers.map((customer) => (
+              <option key={customer._id} value={customer._id}>
+                {customer.name}
               </option>
             ))}
           </select>
-          {errors.supplier && (
-            <p className="text-red-500">{errors.supplier.message}</p>
+          {errors.customer && (
+            <p className="text-red-500">{errors.customer.message}</p>
+          )}
+        </div>
+
+         <div>
+          <label>Warehouse</label>
+          <select
+            {...register("warehouse", { required: "Warehouse is required" })}
+            className="input w-full"
+          >
+            <option value="">-- Select Warehouse --</option>
+            {warehouses.map((warehouse) => (
+              <option key={warehouse._id} value={warehouse._id}>
+                {`${warehouse.name} (${warehouse.location})`}
+              </option>
+            ))}
+          </select>
+          {errors.warehouse && (
+            <p className="text-red-500">{errors.warehouse.message}</p>
           )}
         </div>
 
@@ -256,7 +273,7 @@ const PurchaseInvoiceForm = ({
           <thead>
             <tr className="bg-gray-100">
               <th>Product</th>
-              <th>Received QTY</th>
+              <th>Sale QTY</th>
               <th>Rate</th>
               <th>Amount</th>
               <th>Action</th>
@@ -369,11 +386,11 @@ const PurchaseInvoiceForm = ({
           Cancel
         </button>
         <button type="submit" className="btn btn-primary">
-          {invoice ? "Update" : "Create"} Purchase Invoice
+          {invoice ? "Update" : "Create"} Sale Invoice
         </button>
       </div>
     </form>
   );
 };
 
-export default PurchaseInvoiceForm;
+export default SaleInvoiceForm;

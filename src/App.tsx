@@ -7,10 +7,11 @@ import {
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import ToastProvider from "./components/ToastProvider";
 
-import Layout from "./components/Layout/Layout";
-import PurchaseLayout from "./components/Layout/PurchaseLayout";
-import StockLayout from "./components/Layout/StockLayout";
-import SaleLayout from "./components/Layout/SaleLayout";
+import Layout from "./components/layout/Layout";
+import PurchaseLayout from "./components/layout/PurchaseLayout";
+import StockLayout from "./components/layout/StockLayout";
+import SaleLayout from "./components/layout/SaleLayout";
+import AccountLayout from "./components/layout/AccountLayout";
 
 import PurchaseDashboard from "./pages/PurchaseDashboard";
 import StockDashboard from "./pages/StockDashboard";
@@ -46,8 +47,13 @@ import PurchaseReturns from "./pages/purchases/PurchaseReturns";
 // Sale
 import Customers from "./pages/sales/Customers";
 import SaleOrderPage from "./pages/sales/SaleOrder";
-import SaleInvoice from "./pages/sales/SaleInvoice";
-import SaleReturn from "./pages/sales/SaleReturn";
+import SaleInvoicePage from "./pages/sales/SaleInvoice";
+import SaleReturnPage from "./pages/sales/SaleReturn";
+// Transaction
+import Transactions from "./pages/account/Transactions";
+import PaymentVoucher from "./pages/account/PaymentVoucher";
+import ReceiptVoucher from "./pages/account/ReceiptVoucher";
+import AccountDashboard from "./pages/AccountDashboard";
 
 const queryClient = new QueryClient();
 
@@ -91,8 +97,15 @@ function App() {
                 <Route index element={<SaleDashboard />} />
                 <Route path="customers" element={<Customers />} />
                 <Route path="orders" element={<SaleOrderPage />} />
-                <Route path="invoices" element={<SaleInvoice />} />
-                <Route path="returns" element={<SaleReturn />} />
+                <Route path="invoices" element={<SaleInvoicePage />} />
+                <Route path="returns" element={<SaleReturnPage />} />
+              </Route>
+
+              <Route path="/account" element={<AccountLayout />}>
+                <Route index element={<AccountDashboard />} />
+                <Route path="transactions" element={<Transactions />} />
+                <Route path="payments" element={<PaymentVoucher />} />
+                <Route path="receipts" element={<ReceiptVoucher />} />
               </Route>
 
               <Route path="/calendar" element={<Calendar />} />

@@ -6,20 +6,20 @@ import {
   UserIcon,
   CurrencyDollarIcon,
   ClipboardDocumentListIcon,
-  CalendarIcon,
-  ChartBarIcon,
-  FolderIcon,
-  Cog6ToothIcon,
   CubeIcon,
   IdentificationIcon,
   ShoppingCartIcon,
-  BanknotesIcon 
+  BanknotesIcon,
+  BuildingLibraryIcon
 } from "@heroicons/react/24/outline";
 import Header from "../Header";
+import useInitialData from "../../hooks/useInitialData";
 
 const Layout = () => {
   const [sidebarOpen, setSidebarOpen] = useState(false);
   const location = useLocation();
+
+  const loading = useInitialData();
 
   const navItems = [
     { path: "/dashboard", label: "Dashboard", icon: HomeIcon },
@@ -28,17 +28,21 @@ const Layout = () => {
     { path: "/deals", label: "Deals", icon: CurrencyDollarIcon },
     { path: "/tasks", label: "Tasks", icon: ClipboardDocumentListIcon },
     { path: "/employees", label: "Employees", icon: IdentificationIcon },
-
+    { path: "/account", label: "Account", icon: BuildingLibraryIcon },
     { path: "/stock", label: "Stock", icon: CubeIcon },
     { path: "/purchase", label: "Purchase", icon: ShoppingCartIcon },
-    { path: "/sale", label: "Sale", icon: BanknotesIcon  },
-
-
-    { path: "/calendar", label: "Calendar", icon: CalendarIcon },
-    { path: "/reports", label: "Reports", icon: ChartBarIcon },
-    { path: "/projects", label: "Projects", icon: FolderIcon },
-    { path: "/settings", label: "Settings", icon: Cog6ToothIcon },
+    { path: "/sale", label: "Sale", icon: BanknotesIcon },
   ];
+
+  if (loading) {
+    return (
+      <div className="flex items-center justify-center h-screen bg-white">
+        <h1 className="text-4xl font-extrabold bg-gradient-to-r from-primary-600 via-primary-400 to-primary-600 bg-clip-text text-transparent animate-pulse">
+          CRM
+        </h1>
+      </div>
+    );
+  }
 
   return (
     <div className="flex h-screen bg-gray-50">
