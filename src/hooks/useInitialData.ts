@@ -21,6 +21,7 @@ import useSaleInvoiceStore from "../store/sale-invoice";
 import useSalesReturnStore from "../store/sale-return";
 import useTransactionStore from "../store/transactions";
 import useDepartmentsStore from "../store/departments";
+import useProjectsStore from "../store/projects";
 
 const useInitialData = () => {
   const { fetchDeals } = useDealsStore();
@@ -57,6 +58,7 @@ const useInitialData = () => {
    const { fetchEmployees } = useEmployeesStore();
    const { fetchDepartments } = useDepartmentsStore();
 
+   const { fetchProjects } = useProjectsStore();
 
 
   const [loading, setLoading] = useState(true);
@@ -69,6 +71,7 @@ const useInitialData = () => {
         fetchLeads(),
     
         fetchTasks(),
+        fetchProjects(),
 
         fetchCategories(),
         fetchWarehouses(),
