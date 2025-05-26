@@ -2,7 +2,8 @@ import { useEffect } from "react";
 import { useForm } from "react-hook-form";
 import useEmployeesStore from "../store/employee";
 import { EmployeeFormData, EmployeeFormWithId } from "../utilities/types";
-
+import useDepartmentsStore from "../store/departments";
+import { employeeTypes } from "../utilities/const";
 
 interface EmployeeFormProps {
   employee?: EmployeeFormWithId;
@@ -12,6 +13,8 @@ interface EmployeeFormProps {
 const EmployeeForm = ({ employee, onClose }: EmployeeFormProps) => {
   const { addEmployee, updateEmployee } = useEmployeesStore();
 
+  const { departments } = useDepartmentsStore();
+
   const {
     register,
     handleSubmit,
@@ -20,10 +23,11 @@ const EmployeeForm = ({ employee, onClose }: EmployeeFormProps) => {
   } = useForm<EmployeeFormData>({
     defaultValues: {
       name: "",
-      department: "",
+      department: null,
       position: "",
       hireDate: "",
-      email : "",
+      email: "",
+      types: "Casual",
     },
   });
 
@@ -35,7 +39,7 @@ const EmployeeForm = ({ employee, onClose }: EmployeeFormProps) => {
       setValue("position", employee.position);
       setValue("hireDate", employee.hireDate);
       setValue("email", employee.email);
-      // Convert to YYYY-MM-DD if it's a full ISO or Date string
+      setValue("types", employee.types);
       const formattedDate = employee.hireDate.slice(0, 10);
       setValue("hireDate", formattedDate);
     }
@@ -52,7 +56,7 @@ const EmployeeForm = ({ employee, onClose }: EmployeeFormProps) => {
 
   return (
     <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
-      <div className="grid grid-cols-2 gap-4">
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
         <div>
           <label className="block text-sm font-medium text-gray-700">
             Name
@@ -77,26 +81,20 @@ const EmployeeForm = ({ employee, onClose }: EmployeeFormProps) => {
             className="input"
           />
           {errors.email && (
-            <p className="mt-1 text-sm text-red-600">
-              {errors.email.message}
-            </p>
+            <p className="mt-1 text-sm text-red-600">{errors.email.message}</p>
           )}
         </div>
 
         <div>
-          <label className="block text-sm font-medium text-gray-700">
-            Department
-          </label>
-          <input
-            type="text"
-            {...register("department", { required: "Department is required" })}
-            className="input"
-          />
-          {errors.department && (
-            <p className="mt-1 text-sm text-red-600">
-              {errors.department.message}
-            </p>
-          )}
+          <label>Parent Department (Optional)</label>
+          <select {...register("department")} className="input w-full">
+            <option value="">-- None --</option>
+            {departments.map((dep) => (
+              <option key={dep._id} value={dep._id}>
+                {dep.name}
+              </option>
+            ))}
+          </select>
         </div>
 
         <div>
@@ -130,11 +128,19 @@ const EmployeeForm = ({ employee, onClose }: EmployeeFormProps) => {
             </p>
           )}
         </div>
+      </div>
 
-    
-
-     
-       
+      <div>
+        <label className="block text-sm font-medium text-gray-700">
+          Employee Type
+        </label>
+        <select {...register("types")} className="input w-full">
+          {employeeTypes.map((type) => (
+            <option key={type.value} value={type.value}>
+              {type.label}
+            </option>
+          ))}
+        </select>
       </div>
 
       <div className="flex justify-end space-x-2">

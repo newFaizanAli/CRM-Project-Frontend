@@ -7,10 +7,9 @@ import {
   CurrencyDollarIcon,
   ClipboardDocumentListIcon,
   CubeIcon,
-  IdentificationIcon,
   ShoppingCartIcon,
   BanknotesIcon,
-  BuildingLibraryIcon
+  BuildingLibraryIcon,
 } from "@heroicons/react/24/outline";
 import Header from "../Header";
 import useInitialData from "../../hooks/useInitialData";
@@ -26,19 +25,19 @@ const Layout = () => {
     { path: "/contacts", label: "Contacts", icon: UserGroupIcon },
     { path: "/leads", label: "Leads", icon: UserIcon },
     { path: "/deals", label: "Deals", icon: CurrencyDollarIcon },
-    { path: "/tasks", label: "Tasks", icon: ClipboardDocumentListIcon },
-    { path: "/employees", label: "Employees", icon: IdentificationIcon },
     { path: "/account", label: "Accounts", icon: BuildingLibraryIcon },
-    { path: "/stock", label: "Stocks", icon: CubeIcon },
     { path: "/purchase", label: "Purchases", icon: ShoppingCartIcon },
     { path: "/sale", label: "Sales", icon: BanknotesIcon },
+    { path: "/stock", label: "Stocks", icon: CubeIcon },
+    { path: "/hr", label: "HR", icon: UserIcon },
+     { path: "/project", label: "Project", icon: ClipboardDocumentListIcon },
   ];
 
   if (loading) {
     return (
       <div className="flex items-center justify-center h-screen bg-white">
         <h1 className="text-4xl font-extrabold bg-gradient-to-r from-primary-600 via-primary-400 to-primary-600 bg-clip-text text-transparent animate-pulse">
-          CRM
+          ERP
         </h1>
       </div>
     );
@@ -53,7 +52,7 @@ const Layout = () => {
         } overflow-y-auto`}
       >
         <div className="flex h-16 items-center justify-between px-4 sticky top-0 bg-white z-10">
-          <h1 className="text-2xl font-bold text-primary-600">CRM</h1>
+          <h1 className="text-2xl font-bold text-primary-600">ERP</h1>
           <button onClick={() => setSidebarOpen(false)} className="lg:hidden">
             <svg
               className="h-6 w-6"

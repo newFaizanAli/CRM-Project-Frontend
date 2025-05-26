@@ -1,72 +1,70 @@
 import { useForm } from "react-hook-form";
-import { Task, TaskInput } from "../utilities/types";
-import useProjectsStore from "../store/projects";
+import { Project, ProjectInput } from "../utilities/types";
+import useProjectsStore from "../store/projects"; 
 import useEmployeesStore from "../store/employee";
-import useTasksStore from "../store/tasks";
+import useDepartmentsStore from "../store/departments";
 
-interface TaskFormProps {
-  task?: Task;
+interface ProjectFormProps {
+  project?: Project;
   onClose: () => void;
 }
 
-const TaskForm = ({ task, onClose }: TaskFormProps) => {
-  const { addTask, updateTask } = useTasksStore();
+const ProjectForm = ({ project, onClose }: ProjectFormProps) => {
+  const { addProject, updateProject } = useProjectsStore();
   const { employees } = useEmployeesStore();
-  const { projects } = useProjectsStore();
+  const { departments } = useDepartmentsStore();
 
   const {
     register,
     handleSubmit,
     formState: { errors },
-  } = useForm<TaskInput>({
-    defaultValues: task
+  } = useForm<ProjectInput>({
+    defaultValues: project
       ? {
-          title: task.title,
-          description: task.description,
-          dueDate: task.dueDate,
-          status: task.status,
-          priority: task.priority,
-          assignedTo: task.assignedTo?._id || "",
-          project: task.project?._id || "",
+          title: project.title,
+          description: project.description,
+          dueDate: project.dueDate,
+          status: project.status,
+          priority: project.priority,
+          assignedTo: project.assignedTo?._id || "",
+          department: project.department?._id || "",
+          type: project.type,
         }
-      : ({
+      : {
           title: "",
           description: "",
           dueDate: "",
           status: "pending",
           priority: "medium",
           assignedTo: "",
-          project: "",
-        } as any),
+          department: "",
+          type: "other",
+        } as any,
   });
 
   const onSubmit = (data: any) => {
     const fullAssignee = employees.find((e) => e._id === data.assignedTo);
-    const fullProject = projects.find((d) => d._id === data.project);
+    const fullDepartment = departments.find((d) => d._id === data.department);
 
-    const transformed: TaskInput = {
+    const transformed: Omit<Project, "_id"> = {
       title: data.title,
       description: data.description,
       dueDate: data.dueDate,
       status: data.status,
       priority: data.priority,
-
+      type: data.type,
       assignedTo: fullAssignee
         ? { _id: String(fullAssignee._id), name: fullAssignee.name }
         : null,
-      project: fullProject
-        ? {
-            _id: String(fullProject._id),
-            title: fullProject.title,
-            ID: fullProject.ID,
-          }
+      department: fullDepartment
+        ? { _id: String(fullDepartment._id), name: fullDepartment.name }
         : null,
     };
 
-    if (task) {
-      updateTask(task._id, transformed);
+    if (project) {
+      updateProject(project._id, transformed);
     } else {
-      addTask(transformed);
+      addProject(transformed);
     }
 
     onClose();
@@ -82,9 +80,7 @@ const TaskForm = ({ task, onClose }: TaskFormProps) => {
             {...register("title", { required: "Title is required" })}
             className="input w-full"
           />
-          {errors.title && (
-            <p className="text-red-500">{errors.title.message}</p>
-          )}
+          {errors.title && <p className="text-red-500">{errors.title.message}</p>}
         </div>
 
         {/* Due Date */}
@@ -95,9 +91,7 @@ const TaskForm = ({ task, onClose }: TaskFormProps) => {
             {...register("dueDate", { required: "Due date is required" })}
             className="input w-full"
           />
-          {errors.dueDate && (
-            <p className="text-red-500">{errors.dueDate.message}</p>
-          )}
+          {errors.dueDate && <p className="text-red-500">{errors.dueDate.message}</p>}
         </div>
 
         {/* Status */}
@@ -120,17 +114,14 @@ const TaskForm = ({ task, onClose }: TaskFormProps) => {
           </select>
         </div>
 
-        {/* projects */}
 
+         {/* Type */}
         <div>
-          <label>Project</label>
-          <select {...register("project")} className="input w-full">
-            <option value="">-- Select Project --</option>
-            {projects.map((proj) => (
-              <option key={proj._id} value={proj._id}>
-                {proj.title}
-              </option>
-            ))}
+          <label>Project Type</label>
+          <select {...register("type")} className="input w-full">
+            <option value="external">External</option>
+            <option value="internal">Internal</option>
+            <option value="other">Other</option>
           </select>
         </div>
 
@@ -142,6 +133,19 @@ const TaskForm = ({ task, onClose }: TaskFormProps) => {
             {employees.map((emp) => (
               <option key={emp._id} value={emp._id}>
                 {emp.name}
+              </option>
+            ))}
+          </select>
+        </div>
+
+        {/* Department */}
+        <div>
+          <label>Department</label>
+          <select {...register("department")} className="input w-full">
+            <option value="">-- Select Department --</option>
+            {departments.map((dep) => (
+              <option key={dep._id} value={dep._id}>
+                {dep.name}
               </option>
             ))}
           </select>
@@ -163,11 +167,11 @@ const TaskForm = ({ task, onClose }: TaskFormProps) => {
           Cancel
         </button>
         <button type="submit" className="btn btn-primary">
-          {task ? "Update" : "Create"} Task
+          {project ? "Update" : "Create"} Project
         </button>
       </div>
     </form>
   );
 };
 
-export default TaskForm;
+export default ProjectForm;

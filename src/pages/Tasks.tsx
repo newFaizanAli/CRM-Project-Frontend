@@ -18,13 +18,20 @@ const columns: ColumnDef<Task, any>[] = [
     header: 'Title',
     cell: info => info.getValue(),
   }),
-  columnHelper.accessor('description', {
-    header: 'Description',
-    cell: info => info.getValue(),
-  }),
+
   columnHelper.accessor('dueDate', {
     header: 'Due Date',
     cell: info => new Date(info.getValue()).toLocaleDateString(),
+  }),
+  columnHelper.accessor((row) => row.assignedTo, {
+    id: "assignedTo",
+    header: "Assigned To",
+    cell: (info) => info.getValue()?.name ?? "-",
+  }),
+  columnHelper.accessor((row) => row.project, {
+    id: "project",
+    header: "Project",
+    cell: (info) => info.getValue()?.ID ?? "-",
   }),
   columnHelper.accessor('status', {
     header: 'Status',
@@ -58,10 +65,7 @@ const columns: ColumnDef<Task, any>[] = [
       );
     },
   }),
-  columnHelper.accessor('assignedTo', {
-    header: 'Assigned To',
-    cell: info => info.getValue(),
-  }),
+
 ];
 
 

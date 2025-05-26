@@ -10,14 +10,31 @@ export interface Category {
 
 // -------------Employees------------
 
+export type EmployeeType =
+  | "Permanent"
+  | "Contract"
+  | "Intern"
+  | "Consultant"
+  | "Part-Time"
+  | "Temporary"
+  | "Freelancer"
+  | "Probation"
+  | "Casual"
+  | "Remote";
+
 export interface Employee {
   _id?: number;
   name: string;
-  department: string;
+  // department: string;
+  department: {
+    _id: string;
+    name: string;
+  } | null;
   position: string;
   hireDate: string;
   email: string;
   ID?: string;
+  types: EmployeeType;
 }
 
 // Form data without _id and ID
@@ -69,12 +86,16 @@ export interface TaskInput {
   dueDate: string;
   status: TaskStatus;
   priority: TaskPriority;
-  assignedTo: string;
+  assignedTo: { _id: string; name: string } | null;
+  project: { _id: string; title: string; ID: string } | null;
 }
 
 export interface Task extends TaskInput {
   _id: number;
 }
+
+
+// ------- warehouse -------
 
 export interface Warehouse {
   _id?: number;
@@ -282,7 +303,6 @@ export type PurchaseInvoiceFormWithId = PurchaseInvoiceFormData & {
   _id: string;
 };
 
-
 // --------- Purchase Return -----------
 
 export interface PurchaseReturnItem {
@@ -294,10 +314,7 @@ export interface PurchaseReturnItem {
   maxQty: number;
 }
 
-export type PurchaseReturnStatus =
-  | "Draft"
-  | "Submitted"
-  | "Cancelled"; 
+export type PurchaseReturnStatus = "Draft" | "Submitted" | "Cancelled";
 
 export interface PurchaseReturn {
   _id?: string;
@@ -313,7 +330,6 @@ export interface PurchaseReturn {
   status: PurchaseReturnStatus;
   reason: string;
   items: PurchaseReturnItem[];
-  
 }
 
 export type PurchaseReturnFormData = Omit<
@@ -325,26 +341,15 @@ export type PurchaseReturnFormWithId = PurchaseReturnFormData & {
   _id: string;
 };
 
-
-
 // --------- Customer -----------
 
+export type CustomerStatus = "active" | "inactive" | "lead";
 
-export type CustomerStatus =
-  | "active"
-  | "inactive"
-  | "lead"; 
-
-
-export type CustomerType =
-  | "Regular"
-  | "Walk-in"
-  | "Wholesale" 
-  | "Retail";
+export type CustomerType = "Regular" | "Walk-in" | "Wholesale" | "Retail";
 
 export interface Customer {
   _id?: string;
-   ID?: string;
+  ID?: string;
   name?: string;
   email?: string;
   phone?: string;
@@ -365,7 +370,6 @@ export type CustomerFormData = Omit<
 export type CustomerFormWithId = CustomerFormData & {
   _id: string;
 };
-
 
 // -----------Sale Order--------------
 
@@ -407,8 +411,6 @@ export type SaleOrderFormData = Omit<
 
 export type SaleOrderFormWithId = SaleOrderFormData & { _id: string };
 
-
-
 // --------- Sale Invoice-----------
 
 export interface SaleInvoiceItem {
@@ -437,7 +439,7 @@ export interface SaleInvoice {
     _id: string;
     name: string;
   };
-   warehouse: {
+  warehouse: {
     _id: string;
     name: string;
     location: string;
@@ -460,7 +462,6 @@ export type SaleInvoiceFormWithId = SaleInvoiceFormData & {
   _id: string;
 };
 
-
 // --------- Sale Receipt-----------
 
 export interface SaleReturnItem {
@@ -472,10 +473,7 @@ export interface SaleReturnItem {
   maxQty: number;
 }
 
-export type SaleReturnStatus =
-  | "Pending"
-  | "Accepted"
-  | "Rejetected"; 
+export type SaleReturnStatus = "Pending" | "Accepted" | "Rejetected";
 
 export interface SaleReturn {
   _id?: string;
@@ -503,10 +501,9 @@ export type SaleReturnFormWithId = SaleReturnFormData & {
   _id: string;
 };
 
-
 // --------- Transaction -----------
 
-export type TransactionType = "payment" | "receipt"; 
+export type TransactionType = "payment" | "receipt";
 export type TransactionMethod = "cash" | "bank";
 export type TransactionPartyType = "customers" | "suppliers";
 export type TransactionReferenceModel = "purchase-invoice" | "sales-invoice";
@@ -535,10 +532,68 @@ export type TransactionFormData = Omit<
   Transaction,
   "_id" | "createdAt" | "updatedAt" | "party" | "createdBy" | "referenceInvoice"
 > & {
-  party: string; 
+  party: string;
   referenceInvoice?: string;
 };
 
 export type TransactionWithId = TransactionFormData & {
   _id: string;
 };
+
+// --------- Department -----------
+
+export interface Department {
+  _id?: string;
+  ID?: string;
+  name: string;
+  parentDepartment?: {
+    _id: string;
+    name: string;
+  } | null;
+  manager?: {
+    _id: string;
+    name: string;
+  } | null;
+  isActive: boolean;
+  description?: string;
+}
+
+export type DepartmentFormData = Omit<
+  Department,
+  "_id" | "parentDepartment" | "manager"
+> & {
+  parentDepartment?: string | null;
+  manager?: string | null;
+};
+
+export type DepartmentWithId = DepartmentFormData & {
+  _id: string;
+};
+
+// --------- Project ----------
+
+export type ProjectStatus = "pending" | "in-progress" | "completed";
+export type ProjectPriority = "low" | "medium" | "high";
+
+export interface ProjectInput {
+  ID?: string;
+  _id?: string;
+  title: string;
+  description: string;
+  dueDate: string;
+  status: TaskStatus;
+  priority: TaskPriority;
+  assignedTo: {
+    _id: string;
+    name: string;
+  } | null;
+  department: {
+    _id: string;
+    name: string;
+  } | null;
+  type: string,
+}
+
+export interface Project extends ProjectInput {
+  _id: string;
+}

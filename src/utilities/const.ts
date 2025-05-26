@@ -70,3 +70,16 @@ export const saleReturnStatus = [
   { label: "Accepted", value: "Accepted" },
   { label: "Rejected", value: "Rejected" },
 ];
+
+export const employeeTypes = [
+  { label: "Permanent", value: "Permanent" },
+  { label: "Contract", value: "Contract" },
+  { label: "Intern", value: "Intern" },
+  { label: "Consultant", value: "Consultant" },
+  { label: "Part-Time", value: "Part-Time" },
+  { label: "Temporary", value: "Temporary" },
+  { label: "Freelancer", value: "Freelancer" },
+  { label: "Probation", value: "Probation" },
+  { label: "Casual", value: "Casual" },
+  { label: "Remote", value: "Remote" },
+];

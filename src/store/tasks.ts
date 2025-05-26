@@ -17,7 +17,7 @@ interface TasksState {
 
 const DUMMY_STORAGE_KEY = "dummy_tasks";
 
-const useLeadsStore = create<TasksState>((set, get) => ({
+const useTasksStore = create<TasksState>((set, get) => ({
   tasks: [],
   isFetched: false,
 
@@ -133,4 +133,4 @@ const useLeadsStore = create<TasksState>((set, get) => ({
   },
 }));
 
-export default useLeadsStore;
+export default useTasksStore;

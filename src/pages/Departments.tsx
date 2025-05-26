@@ -6,100 +6,85 @@ import {
   createColumnHelper,
   ColumnDef,
 } from "@tanstack/react-table";
-import useEmployeesStore from "../store/employee";
-import EmployeeForm from "../components/EmployeeForm";
-import { Employee, EmployeeFormWithId } from "../utilities/types";
+import { Department } from "../utilities/types";
+import useDepartmentsStore from "../store/departments";
+import DepartmentForm from "../components/DepartmentForm";
 
-const columnHelper = createColumnHelper<Employee>();
+const columnHelper = createColumnHelper<Department>();
 
-const columns: ColumnDef<Employee, any>[] = [
+const columns: ColumnDef<Department, any>[] = [
   columnHelper.accessor("ID", {
-    header: "Employee ID",
+    header: "Department ID",
     cell: (info) => info.getValue(),
   }),
   columnHelper.accessor("name", {
     header: "Name",
     cell: (info) => info.getValue(),
   }),
-  columnHelper.accessor("email", {
-    header: "Email",
-    cell: (info) => info.getValue(),
-  }),
-  columnHelper.accessor((row) => row.department, {
-    id: "department",
-    header: "Department",
+  columnHelper.accessor((row) => row.parentDepartment, {
+    id: "parentDepartment",
+    header: "Parent Department",
     cell: (info) => info.getValue()?.name ?? "-",
   }),
-  columnHelper.accessor("position", {
-    header: "Position",
-    cell: (info) => info.getValue(),
+  columnHelper.accessor((row) => row.manager, {
+    id: "manager",
+    header: "Manager",
+    cell: (info) => info.getValue()?.name ?? "-",
   }),
-  columnHelper.accessor("types", {
-    header: "Type",
-    cell: (info) => info.getValue(),
-  }),
-  columnHelper.accessor("hireDate", {
-    header: "Hire Date",
-    cell: (info) => new Date(info.getValue()).toLocaleDateString(),
+  columnHelper.accessor("isActive", {
+    header: "Status",
+    cell: (info) => (info.getValue() ? "Active" : "Inactive"),
   }),
 ];
 
-const Employees = () => {
-  const { employees, deleteEmployee, fetchEmployees, isFetched } =
-    useEmployeesStore();
+const DepartmentPage = () => {
+  const { departments, fetchDepartments, deleteDepartment, isFetched } =
+    useDepartmentsStore();
+
   const [isModalOpen, setIsModalOpen] = useState(false);
-  const [selectedEmployee, setEmployeeTask] = useState<
-    EmployeeFormWithId | undefined
+  const [selectedDepartment, setSelectedDepartment] = useState<
+    Department | undefined
   >();
 
   useEffect(() => {
     if (!isFetched) {
-      fetchEmployees();
+      fetchDepartments();
     }
-  }, [fetchEmployees, isFetched]);
+  }, [fetchDepartments, isFetched]);
 
   const table = useReactTable({
-    data: employees,
+    data: departments,
     columns,
     getCoreRowModel: getCoreRowModel(),
   });
 
-  const handleDelete = (id: number) => {
-    if (window.confirm("Are you sure you want to delete this task?")) {
-      deleteEmployee(id);
-    }
-  };
-
-  const handleEdit = (employee: Employee) => {
-    const formData: EmployeeFormWithId = {
-      _id: employee._id,
-      name: employee.name,
-      department: employee.department,
-      position: employee.position,
-      hireDate: employee.hireDate,
-      email: employee.email,
-      types: employee.types,
-    };
-    setEmployeeTask(formData);
+  const handleEdit = (dep: Department) => {
+    setSelectedDepartment(dep);
     setIsModalOpen(true);
   };
 
+  const handleDelete = (id: string) => {
+    if (window.confirm("Are you sure you want to delete this department?")) {
+      deleteDepartment(id);
+    }
+  };
+
   const handleAdd = () => {
-    setEmployeeTask(undefined);
+    setSelectedDepartment(undefined);
     setIsModalOpen(true);
   };
 
   const handleClose = () => {
     setIsModalOpen(false);
-    setEmployeeTask(undefined);
+    setSelectedDepartment(undefined);
   };
 
   return (
     <div className="p-6">
       <div className="flex justify-between items-center mb-6">
-        <h1 className="text-2xl font-bold text-gray-900">Employees</h1>
+        <h1 className="text-2xl font-bold text-gray-900">Departments</h1>
         <button onClick={handleAdd} className="btn btn-primary">
-          Add Employee
+          Add Department
         </button>
       </div>
 
@@ -107,9 +92,12 @@ const Employees = () => {
         <div className="fixed inset-0 bg-gray-500 bg-opacity-75 flex items-center justify-center p-4 z-50">
           <div className="bg-white rounded-lg max-h-screen overflow-y-auto w-full max-w-3xl p-6">
             <h2 className="text-xl font-semibold mb-4">
-              {selectedEmployee ? "Edit Employee" : "Add Employee"}
+              {selectedDepartment ? "Edit Department" : "Add Department"}
             </h2>
-            <EmployeeForm employee={selectedEmployee} onClose={handleClose} />
+            <DepartmentForm
+              department={selectedDepartment}
+              onClose={handleClose}
+            />
           </div>
         </div>
       )}
@@ -167,4 +155,4 @@ const Employees = () => {
   );
 };
 
-export default Employees;
+export default DepartmentPage;

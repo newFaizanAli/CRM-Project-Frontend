@@ -20,10 +20,10 @@ import useSaleOrderStore from "../store/sale-orders";
 import useSaleInvoiceStore from "../store/sale-invoice";
 import useSalesReturnStore from "../store/sale-return";
 import useTransactionStore from "../store/transactions";
+import useDepartmentsStore from "../store/departments";
 
 const useInitialData = () => {
   const { fetchDeals } = useDealsStore();
-  const { fetchEmployees } = useEmployeesStore();
   const { fetchLeads } = useLeadsStore();
   const { fetchContacts } = useContactsStore();
   const { fetchTasks } = useTasksStore();
@@ -50,8 +50,13 @@ const useInitialData = () => {
   const { fetchSaleOrders } = useSaleOrderStore();
   const { fetchSaleInvoices } = useSaleInvoiceStore();
   const { fetchSalesReturns } = useSalesReturnStore();
+  const { fetchTransactions } = useTransactionStore();
 
-    const { fetchTransactions } = useTransactionStore();
+  // hr
+
+   const { fetchEmployees } = useEmployeesStore();
+   const { fetchDepartments } = useDepartmentsStore();
+
 
 
   const [loading, setLoading] = useState(true);
@@ -62,7 +67,7 @@ const useInitialData = () => {
         fetchContacts(),
         fetchDeals(),
         fetchLeads(),
-        fetchEmployees(),
+    
         fetchTasks(),
 
         fetchCategories(),
@@ -84,6 +89,9 @@ const useInitialData = () => {
         fetchSalesReturns(),
 
         fetchTransactions(),
+
+        fetchEmployees(),
+        fetchDepartments(),
       ]);
       setLoading(false);
     };

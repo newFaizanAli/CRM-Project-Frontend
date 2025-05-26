@@ -6,100 +6,115 @@ import {
   createColumnHelper,
   ColumnDef,
 } from "@tanstack/react-table";
-import useEmployeesStore from "../store/employee";
-import EmployeeForm from "../components/EmployeeForm";
-import { Employee, EmployeeFormWithId } from "../utilities/types";
+import { Project } from "../utilities/types";
+import useProjectsStore from "../store/projects";
+import ProjectForm from "../components/ProjectForm";
 
-const columnHelper = createColumnHelper<Employee>();
+const columnHelper = createColumnHelper<Project>();
 
-const columns: ColumnDef<Employee, any>[] = [
+const columns: ColumnDef<Project, any>[] = [
   columnHelper.accessor("ID", {
-    header: "Employee ID",
+    header: "ID",
     cell: (info) => info.getValue(),
   }),
-  columnHelper.accessor("name", {
-    header: "Name",
-    cell: (info) => info.getValue(),
-  }),
-  columnHelper.accessor("email", {
-    header: "Email",
+  columnHelper.accessor("title", {
+    header: "Title",
     cell: (info) => info.getValue(),
   }),
   columnHelper.accessor((row) => row.department, {
     id: "department",
-    header: "Department",
+    header: " Department",
     cell: (info) => info.getValue()?.name ?? "-",
   }),
-  columnHelper.accessor("position", {
-    header: "Position",
-    cell: (info) => info.getValue(),
+  columnHelper.accessor((row) => row.assignedTo, {
+    id: "assignedTo",
+    header: "Assigned To",
+    cell: (info) => info.getValue()?.name ?? "-",
   }),
-  columnHelper.accessor("types", {
-    header: "Type",
-    cell: (info) => info.getValue(),
-  }),
-  columnHelper.accessor("hireDate", {
-    header: "Hire Date",
+  columnHelper.accessor("dueDate", {
+    header: "Due Date",
     cell: (info) => new Date(info.getValue()).toLocaleDateString(),
+  }),
+  columnHelper.accessor("status", {
+    header: "Status",
+    cell: (info) => {
+      const status = info.getValue();
+      const color = {
+        pending: "bg-yellow-100 text-yellow-800",
+        "in-progress": "bg-blue-100 text-blue-800",
+        completed: "bg-green-100 text-green-800",
+      }[status];
+      return (
+        <span className={`px-2 py-1 rounded-full text-xs font-medium ${color}`}>
+          {status}
+        </span>
+      );
+    },
+  }),
+  columnHelper.accessor("priority", {
+    header: "Priority",
+    cell: (info) => {
+      const priority = info.getValue();
+      const color = {
+        low: "bg-gray-100 text-gray-800",
+        medium: "bg-orange-100 text-orange-800",
+        high: "bg-red-100 text-red-800",
+      }[priority];
+      return (
+        <span className={`px-2 py-1 rounded-full text-xs font-medium ${color}`}>
+          {priority}
+        </span>
+      );
+    },
   }),
 ];
 
-const Employees = () => {
-  const { employees, deleteEmployee, fetchEmployees, isFetched } =
-    useEmployeesStore();
+const ProjectPage = () => {
+  const { projects, fetchProjects, deleteProject, isFetched } =
+    useProjectsStore();
+
   const [isModalOpen, setIsModalOpen] = useState(false);
-  const [selectedEmployee, setEmployeeTask] = useState<
-    EmployeeFormWithId | undefined
-  >();
+  const [selectedProject, setSelectedProject] = useState<Project | undefined>();
 
   useEffect(() => {
     if (!isFetched) {
-      fetchEmployees();
+      fetchProjects();
     }
-  }, [fetchEmployees, isFetched]);
+  }, [fetchProjects, isFetched]);
 
   const table = useReactTable({
-    data: employees,
+    data: projects,
     columns,
     getCoreRowModel: getCoreRowModel(),
   });
 
-  const handleDelete = (id: number) => {
-    if (window.confirm("Are you sure you want to delete this task?")) {
-      deleteEmployee(id);
-    }
-  };
-
-  const handleEdit = (employee: Employee) => {
-    const formData: EmployeeFormWithId = {
-      _id: employee._id,
-      name: employee.name,
-      department: employee.department,
-      position: employee.position,
-      hireDate: employee.hireDate,
-      email: employee.email,
-      types: employee.types,
-    };
-    setEmployeeTask(formData);
+  const handleEdit = (proj: Project) => {
+    setSelectedProject(proj);
     setIsModalOpen(true);
   };
 
+  const handleDelete = (id: string) => {
+    if (window.confirm("Are you sure you want to delete this project?")) {
+      deleteProject(id);
+    }
+  };
+
   const handleAdd = () => {
-    setEmployeeTask(undefined);
+    setSelectedProject(undefined);
     setIsModalOpen(true);
   };
 
   const handleClose = () => {
     setIsModalOpen(false);
-    setEmployeeTask(undefined);
+    setSelectedProject(undefined);
   };
 
   return (
     <div className="p-6">
       <div className="flex justify-between items-center mb-6">
-        <h1 className="text-2xl font-bold text-gray-900">Employees</h1>
+        <h1 className="text-2xl font-bold text-gray-900">Projects</h1>
         <button onClick={handleAdd} className="btn btn-primary">
-          Add Employee
+          Add Project
         </button>
       </div>
 
@@ -107,9 +122,9 @@ const Employees = () => {
         <div className="fixed inset-0 bg-gray-500 bg-opacity-75 flex items-center justify-center p-4 z-50">
           <div className="bg-white rounded-lg max-h-screen overflow-y-auto w-full max-w-3xl p-6">
             <h2 className="text-xl font-semibold mb-4">
-              {selectedEmployee ? "Edit Employee" : "Add Employee"}
+              {selectedProject ? "Edit Project" : "Add Project"}
             </h2>
-            <EmployeeForm employee={selectedEmployee} onClose={handleClose} />
+            <ProjectForm project={selectedProject} onClose={handleClose} />
           </div>
         </div>
       )}
@@ -167,4 +182,4 @@ const Employees = () => {
   );
 };
 
-export default Employees;
+export default ProjectPage;
