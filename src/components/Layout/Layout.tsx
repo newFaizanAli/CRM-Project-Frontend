@@ -2,14 +2,13 @@ import { useState } from "react";
 import { Link, Outlet, useLocation } from "react-router-dom";
 import {
   HomeIcon,
-  UserGroupIcon,
   UserIcon,
-  CurrencyDollarIcon,
   ClipboardDocumentListIcon,
   CubeIcon,
   ShoppingCartIcon,
   BanknotesIcon,
   BuildingLibraryIcon,
+  PuzzlePieceIcon
 } from "@heroicons/react/24/outline";
 import Header from "../Header";
 import useInitialData from "../../hooks/useInitialData";
@@ -22,15 +21,13 @@ const Layout = () => {
 
   const navItems = [
     { path: "/dashboard", label: "Dashboard", icon: HomeIcon },
-    { path: "/contacts", label: "Contacts", icon: UserGroupIcon },
-    { path: "/leads", label: "Leads", icon: UserIcon },
-    { path: "/deals", label: "Deals", icon: CurrencyDollarIcon },
+    { path: "/crm", label: "CRM", icon: PuzzlePieceIcon },
     { path: "/account", label: "Accounts", icon: BuildingLibraryIcon },
     { path: "/purchase", label: "Purchases", icon: ShoppingCartIcon },
     { path: "/sale", label: "Sales", icon: BanknotesIcon },
     { path: "/stock", label: "Stocks", icon: CubeIcon },
     { path: "/hr", label: "HR", icon: UserIcon },
-     { path: "/project", label: "Project", icon: ClipboardDocumentListIcon },
+    { path: "/project", label: "Project", icon: ClipboardDocumentListIcon },
   ];
 
   if (loading) {

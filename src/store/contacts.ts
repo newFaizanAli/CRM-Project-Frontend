@@ -1,120 +1,104 @@
 import axios from "axios";
 import { create } from "zustand";
 import { ProjectURL } from "../utilities/const";
+import { Contact } from "../utilities/types";
 import { toastError } from "../utilities/toastUtils";
 
-interface Contact {
-  _id: number;
-  name: string;
-  email: string;
-  phone: string;
-  company: string;
-  status: "active" | "inactive";
-}
-
-interface ContactsState {
+interface ContactState {
   contacts: Contact[];
   isFetched: boolean;
+
   fetchContacts: () => Promise<void>;
-  addContact: (contact: Omit<Contact, "_id">) => void;
-  updateContact: (id: number, contact: Partial<Contact>) => void;
-  deleteContact: (id: number) => void;
+  addContact: (data: Omit<Contact, "_id">) => Promise<void>;
+  updateContact: (id: string, data: Partial<Contact>) => Promise<void>;
+  deleteContact: (id: string) => Promise<void>;
 }
 
 const DUMMY_STORAGE_KEY = "dummy_contacts";
 
-const useContactsStore = create<ContactsState>((set, get) => ({
+const useContactsStore = create<ContactState>((set, get) => ({
   contacts: [],
   isFetched: false,
 
   fetchContacts: async () => {
-    const state = get();
-    if (state.isFetched) return;
+    const { isFetched } = get();
+    if (isFetched) return;
 
+    const token = localStorage.getItem("token");
     const isDummy = localStorage.getItem("accounttype") === "dummy";
 
     if (isDummy) {
       const stored = localStorage.getItem(DUMMY_STORAGE_KEY);
-      const dummyContacts: Contact[] = stored ? JSON.parse(stored) : [];
-      set({ contacts: dummyContacts, isFetched: true });
+      const dummyData: Contact[] = stored ? JSON.parse(stored) : [];
+      set({ contacts: dummyData, isFetched: true });
     } else {
-      const token = localStorage.getItem("token");
       try {
-        const response = await axios.get(`${ProjectURL}/api/contacts`, {
-          headers: {
-            Authorization: `Bearer ${token}`,
-            "Content-Type": "application/json",
-          },
+        const res = await axios.get(`${ProjectURL}/api/contacts`, {
+          headers: { Authorization: `Bearer ${token}` },
         });
-        set({ contacts: response.data, isFetched: true });
-      } catch (error) {
-        console.error("Error fetching contacts:", error);
+        set({ contacts: res.data, isFetched: true });
+      } catch (err) {
+        console.error("Failed to fetch contacts:", err);
+        toastError("Failed to fetch contacts");
       }
     }
   },
 
-  addContact: async (contact) => {
+  addContact: async (data) => {
+    const token = localStorage.getItem("token");
     const isDummy = localStorage.getItem("accounttype") === "dummy";
 
     if (isDummy) {
       const state = get();
-      const newId = Date.now(); // Simple ID generator
-      const newContact: Contact = { _id: newId, ...contact };
-      const updated = [...state.contacts, newContact];
+      const newData: Contact = { _id: Date.now().toString(), ...data };
+      const updated = [...state.contacts, newData];
       localStorage.setItem(DUMMY_STORAGE_KEY, JSON.stringify(updated));
       set({ contacts: updated });
     } else {
       try {
-        const token = localStorage.getItem("token");
-        const response = await axios.post(
-          `${ProjectURL}/api/contacts`,
-          contact,
-          {
-            headers: {
-              Authorization: `Bearer ${token}`,
-              "Content-Type": "application/json",
-            },
-          }
-        );
+        const res = await axios.post(`${ProjectURL}/api/contacts`, data, {
+          headers: { Authorization: `Bearer ${token}` },
+        });
+
         set((state) => ({
-          contacts: [...state.contacts, response.data],
+          contacts: [...state.contacts, res.data],
         }));
-      } catch (error) {
-        const msg = error?.response?.data?.message;
-        toastError(msg);
+      } catch (err) {
+        const msg = err?.response?.data?.message;
+        toastError(msg || "Failed to add contact");
       }
     }
   },
 
-  updateContact: async (id, contact) => {
+  updateContact: async (id, data) => {
+    const token = localStorage.getItem("token");
     const isDummy = localStorage.getItem("accounttype") === "dummy";
 
     if (isDummy) {
       const state = get();
-      const updatedContacts = state.contacts.map((c) =>
-        c._id === id ? { ...c, ...contact } : c
+      const updated = state.contacts.map((c) =>
+        c._id === id ? { ...c, ...data } : c
       );
-      localStorage.setItem(DUMMY_STORAGE_KEY, JSON.stringify(updatedContacts));
-      set({ contacts: updatedContacts });
+      localStorage.setItem(DUMMY_STORAGE_KEY, JSON.stringify(updated));
+      set({ contacts: updated });
     } else {
       try {
-        const token = localStorage.getItem("token");
-        await axios.put(`${ProjectURL}/api/contacts/${id}`, contact, {
+        const res = await axios.put(`${ProjectURL}/api/contacts/${id}`, data, {
           headers: { Authorization: `Bearer ${token}` },
         });
+
         set((state) => ({
-          contacts: state.contacts.map((c) =>
-            c._id === id ? { ...c, ...contact } : c
-          ),
+          contacts: state.contacts.map((c) => (c._id === id ? res.data : c)),
         }));
-      } catch (error) {
-        const msg = error?.response?.data?.message;
-        toastError(msg);
+      } catch (err) {
+        const msg = err?.response?.data?.message;
+        toastError(msg || "Failed to update contact");
       }
     }
   },
 
   deleteContact: async (id) => {
+    const token = localStorage.getItem("token");
     const isDummy = localStorage.getItem("accounttype") === "dummy";
 
     if (isDummy) {
@@ -124,16 +108,15 @@ const useContactsStore = create<ContactsState>((set, get) => ({
       set({ contacts: updated });
     } else {
       try {
-        const token = localStorage.getItem("token");
         await axios.delete(`${ProjectURL}/api/contacts/${id}`, {
           headers: { Authorization: `Bearer ${token}` },
         });
         set((state) => ({
           contacts: state.contacts.filter((c) => c._id !== id),
         }));
-      } catch (error) {
-        const msg = error?.response?.data?.message;
-        toastError(msg);
+      } catch (err) {
+        const msg = err?.response?.data?.message;
+        toastError(msg || "Failed to delete contact");
       }
     }
   },

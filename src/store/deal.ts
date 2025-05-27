@@ -2,17 +2,9 @@ import axios from "axios";
 import { create } from "zustand";
 import { ProjectURL } from "../utilities/const";
 import { toastError } from "../utilities/toastUtils";
+import { Deal } from "../utilities/types";
 
-interface Deal {
-  _id: number;
-  name: string;
-  company: string;
-  value: number;
-  stage: "proposal" | "negotiation" | "contract" | "closed" | "lost";
-  probability: number;
-  expectedCloseDate: string;
-  owner: string;
-}
+
 
 interface DealsState {
   deals: Deal[];
@@ -37,8 +29,8 @@ const useDealsStore = create<DealsState>((set, get) => ({
     const isDummy = localStorage.getItem("accounttype") === "dummy";
     if (isDummy) {
       const stored = localStorage.getItem(DUMMY_STORAGE_KEY);
-      const dummyLeads: Deal[] = stored ? JSON.parse(stored) : [];
-      set({ deals: dummyLeads, isFetched: true });
+      const dummyDeals: Deal[] = stored ? JSON.parse(stored) : [];
+      set({ deals: dummyDeals, isFetched: true });
     } else {
       try {
         const response = await axios.get(`${ProjectURL}/api/deals`, {
@@ -47,10 +39,11 @@ const useDealsStore = create<DealsState>((set, get) => ({
             "Content-Type": "application/json",
           },
         });
-        const fetchedLeads = response.data;
-        set({ deals: fetchedLeads, isFetched: true });
+        
+        const fetchedDeals = response.data;
+        set({ deals: fetchedDeals, isFetched: true });
       } catch (err) {
-        console.error("Failed to fetch leads:", err);
+        console.error("Failed to fetch deals:", err);
       }
     }
   },
@@ -61,8 +54,8 @@ const useDealsStore = create<DealsState>((set, get) => ({
     if (isDummy) {
       const state = get();
       const newId = Date.now();
-      const newLead: Deal = { _id: newId, ...deal };
-      const updated = [...state.deals, newLead];
+      const newDeal: Deal = { _id: newId, ...deal };
+      const updated = [...state.deals, newDeal];
       localStorage.setItem(DUMMY_STORAGE_KEY, JSON.stringify(updated));
       set({ deals: updated });
     } else {
@@ -74,10 +67,10 @@ const useDealsStore = create<DealsState>((set, get) => ({
           },
         });
 
-        const newLead = response.data;
+        const newDeal = response.data;
 
         set((state) => ({
-          deals: [...state.deals, newLead],
+          deals: [...state.deals, newDeal],
         }));
       } catch (error) {
         const msg = error?.response?.data?.message;
@@ -93,11 +86,11 @@ const useDealsStore = create<DealsState>((set, get) => ({
       const isDummy = localStorage.getItem("accounttype") === "dummy";
       if (isDummy) {
         const state = get();
-        const updatedLeads = state.deals.map((c) =>
+        const updatedDeals = state.deals.map((c) =>
           c._id === id ? { ...c, ...deal } : c
         );
-        localStorage.setItem(DUMMY_STORAGE_KEY, JSON.stringify(updatedLeads));
-        set({ deals: updatedLeads });
+        localStorage.setItem(DUMMY_STORAGE_KEY, JSON.stringify(updatedDeals));
+        set({ deals: updatedDeals });
       } else {
         await axios.put(`${ProjectURL}/api/deals/${id}`, deal, {
           headers: {

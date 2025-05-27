@@ -28,6 +28,7 @@ const EmployeeForm = ({ employee, onClose }: EmployeeFormProps) => {
       hireDate: "",
       email: "",
       types: "Casual",
+      phone: ""
     },
   });
 
@@ -42,6 +43,7 @@ const EmployeeForm = ({ employee, onClose }: EmployeeFormProps) => {
       setValue("types", employee.types);
       const formattedDate = employee.hireDate.slice(0, 10);
       setValue("hireDate", formattedDate);
+      setValue("phone", formattedDate);
     }
   }, [employee, setValue]);
 
@@ -82,6 +84,20 @@ const EmployeeForm = ({ employee, onClose }: EmployeeFormProps) => {
           />
           {errors.email && (
             <p className="mt-1 text-sm text-red-600">{errors.email.message}</p>
+          )}
+        </div>
+
+         <div>
+          <label className="block text-sm font-medium text-gray-700">
+            Phone
+          </label>
+          <input
+            type="tel"
+            {...register("phone")}
+            className="input"
+          />
+          {errors.phone && (
+            <p className="mt-1 text-sm text-red-600">{errors.phone.message}</p>
           )}
         </div>
 

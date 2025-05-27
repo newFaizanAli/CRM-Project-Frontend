@@ -22,12 +22,12 @@ import useSalesReturnStore from "../store/sale-return";
 import useTransactionStore from "../store/transactions";
 import useDepartmentsStore from "../store/departments";
 import useProjectsStore from "../store/projects";
+import useCompaniesStore from "../store/companies";
 
 const useInitialData = () => {
+  // crm
   const { fetchDeals } = useDealsStore();
   const { fetchLeads } = useLeadsStore();
-  const { fetchContacts } = useContactsStore();
-  const { fetchTasks } = useTasksStore();
 
   // Stock
 
@@ -55,11 +55,15 @@ const useInitialData = () => {
 
   // hr
 
-   const { fetchEmployees } = useEmployeesStore();
-   const { fetchDepartments } = useDepartmentsStore();
+  const { fetchEmployees } = useEmployeesStore();
+  const { fetchDepartments } = useDepartmentsStore();
+  const { fetchContacts } = useContactsStore();
+  const { fetchCompanies } = useCompaniesStore();
 
-   const { fetchProjects } = useProjectsStore();
+  // projects
 
+  const { fetchProjects } = useProjectsStore();
+  const { fetchTasks } = useTasksStore();
 
   const [loading, setLoading] = useState(true);
 
@@ -69,7 +73,7 @@ const useInitialData = () => {
         fetchContacts(),
         fetchDeals(),
         fetchLeads(),
-    
+
         fetchTasks(),
         fetchProjects(),
 
@@ -85,7 +89,6 @@ const useInitialData = () => {
         fetchPurchaseInvoices(),
         fetchPurchaseReturns(),
 
-        
         fetchCustomers(),
         fetchSaleOrders(),
         fetchSaleInvoices(),
@@ -95,6 +98,7 @@ const useInitialData = () => {
 
         fetchEmployees(),
         fetchDepartments(),
+        fetchCompanies(),
       ]);
       setLoading(false);
     };

@@ -1,54 +1,82 @@
 import { useForm } from "react-hook-form";
+import { LeadInput, LeadFormData } from "../utilities/types";
+import useCompaniesStore from "../store/companies";
+import { leadSource, leadStatus } from "../utilities/const";
 import useLeadsStore from "../store/leads";
-import {Lead as LeadFormData, LeadInput} from "../utilities/types"
 
 interface LeadFormProps {
-  lead?: LeadFormData;
+  lead?: LeadInput;
   onClose: () => void;
 }
 
 const LeadForm = ({ lead, onClose }: LeadFormProps) => {
   const { addLead, updateLead } = useLeadsStore();
+  const { companies } = useCompaniesStore();
+
   const {
     register,
     handleSubmit,
     formState: { errors },
-  } = useForm<LeadInput>({
-    defaultValues: lead || {
-      name: "",
-      email: "",
-      phone: "",
-      company: "",
-      status: "new",
-      source: "website",
-      value: 0,
+  } = useForm<LeadFormData>({
+    defaultValues: {
+      name: lead?.name || "",
+      email: lead?.email || "",
+      phone: lead?.phone || "",
+      company: lead?.company?._id ?? null,
+      status: lead?.status || "new",
+      source: lead?.source || "website",
+      value: lead?.value || 0,
     },
   });
 
-  const onSubmit = (data: LeadInput) => {
+  const onSubmit = (data: LeadFormData) => {
+    const fullParent = companies.find((d) => d._id === String(data.company));
+
+    const transformedData: Omit<LeadInput, "_id"> = {
+      name: data.name,
+      email: data.email,
+      phone: data.phone,
+      status: data.status,
+      source: data.source,
+      value: data.value,
+      company: fullParent
+        ? { _id: fullParent._id, name: fullParent.name }
+        : null,
+    };
+
     if (lead) {
-      updateLead(lead._id, data);
+      updateLead(lead._id!, transformedData);
     } else {
-      addLead(data);
+      addLead(transformedData);
     }
+
     onClose();
   };
 
   return (
     <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
-      <div className="grid grid-cols-2 gap-4">
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+        {/* Name */}
         <div>
-          <label className="block text-sm font-medium text-gray-700">
-            Name
-          </label>
+          <label>Name</label>
           <input
-            type="text"
             {...register("name", { required: "Name is required" })}
-            className="input"
+            className="input w-full"
           />
-          {errors.name && (
-            <p className="mt-1 text-sm text-red-600">{errors.name.message}</p>
-          )}
+          {errors.name && <p className="text-red-500">{errors.name.message}</p>}
+        </div>
+
+        {/* Company */}
+        <div>
+          <label>Company (Optional)</label>
+          <select {...register("company")} className="input w-full">
+            <option value="">-- None --</option>
+            {companies.map((dep) => (
+              <option key={dep._id} value={dep._id}>
+                {dep.name}
+              </option>
+            ))}
+          </select>
         </div>
 
         <div>
@@ -81,32 +109,18 @@ const LeadForm = ({ lead, onClose }: LeadFormProps) => {
 
         <div>
           <label className="block text-sm font-medium text-gray-700">
-            Company
-          </label>
-          <input
-            type="tel"
-            {...register("company", { required: "Company is required" })}
-            className="input"
-          />
-          {errors.company && (
-            <p className="mt-1 text-sm text-red-600">
-              {errors.company.message}
-            </p>
-          )}
-        </div>
-
-        <div>
-          <label className="block text-sm font-medium text-gray-700">
             Status
           </label>
           <select
             className="input"
             {...register("status", { required: "Status is required" })}
           >
-            <option value="new">New</option>
-            <option value="contacted">Contacted</option>
-            <option value="qualified">Qualified</option>
-            <option value="lost">Lost</option>
+         
+              {leadStatus.map((type) => (
+              <option key={type.value} value={type.value}>
+                {type.label}
+              </option>
+            ))}
           </select>
           {errors.status && (
             <p className="mt-1 text-sm text-red-600">{errors.status.message}</p>
@@ -121,10 +135,11 @@ const LeadForm = ({ lead, onClose }: LeadFormProps) => {
             className="input"
             {...register("source", { required: "Status is required" })}
           >
-            <option value="website">Website</option>
-            <option value="referral">Referral</option>
-            <option value="social">Social Media</option>
-            <option value="other">Other</option>
+            {leadSource.map((type) => (
+              <option key={type.value} value={type.value}>
+                {type.label}
+              </option>
+            ))}
           </select>
           {errors.source && (
             <p className="mt-1 text-sm text-red-600">{errors.source.message}</p>
@@ -145,12 +160,12 @@ const LeadForm = ({ lead, onClose }: LeadFormProps) => {
         </div>
       </div>
 
-      <div className="flex justify-end space-x-2">
+      <div className="flex justify-end gap-2">
         <button type="button" onClick={onClose} className="btn btn-secondary">
           Cancel
         </button>
         <button type="submit" className="btn btn-primary">
-          {lead ? "Update" : "Add"} Lead
+          {lead ? "Update" : "Create"} Lead
         </button>
       </div>
     </form>

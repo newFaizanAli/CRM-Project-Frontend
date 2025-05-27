@@ -1,79 +1,92 @@
 import { useForm } from "react-hook-form";
+import { Deal, DealFormData } from "../utilities/types";
 import useDealsStore from "../store/deal";
-
-interface DealFormData {
-  name: string;
-  company: string;
-  value: number;
-  stage: "proposal" | "negotiation" | "contract" | "closed" | "lost";
-  probability: number;
-  expectedCloseDate: string;
-  owner: string;
-}
+import useCompaniesStore from "../store/companies";
+import { dealStages } from "../utilities/const";
 
 interface DealFormProps {
-  deal?: DealFormData & { _id: number };
+  deal?: Deal;
   onClose: () => void;
 }
 
 const DealForm = ({ deal, onClose }: DealFormProps) => {
   const { addDeal, updateDeal } = useDealsStore();
+  const { companies } = useCompaniesStore();
+
   const {
     register,
     handleSubmit,
     formState: { errors },
   } = useForm<DealFormData>({
-    defaultValues: deal || {
-      name: "",
-      company: "",
-      value: 0,
-      stage: "proposal",
-      probability: 0,
-      expectedCloseDate: "",
-      owner: "",
-    },
+    defaultValues: deal
+      ? {
+          name: deal.name || "",
+          company: deal.company?._id || "",
+          value: deal.value || 0,
+          stage: deal.stage || "proposal",
+          probability: deal.probability || 0,
+          expectedCloseDate: deal.expectedCloseDate || "",
+          owner: deal.owner || "",
+        }
+      : {
+          name: "",
+          company: "",
+          value: 0,
+          stage: "proposal",
+          probability: 0,
+          expectedCloseDate: "",
+          owner: "",
+        },
   });
 
   const onSubmit = (data: DealFormData) => {
+    const fullParent = companies.find((d) => d._id === String(data.company));
+
+    const transformedData: Omit<Deal, "_id"> = {
+      name: data.name,
+      value: data.value,
+      stage: data.stage,
+      probability: data.probability,
+      expectedCloseDate: data.expectedCloseDate,
+      owner: data.owner,
+      company: fullParent
+        ? { _id: fullParent._id, name: fullParent.name }
+        : null,
+    };
+
     if (deal) {
-      updateDeal(deal._id, data);
+      updateDeal(deal._id!, transformedData);
     } else {
-      addDeal(data);
+      addDeal(transformedData);
     }
+
     onClose();
   };
 
   return (
     <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
-      <div className="grid grid-cols-2 gap-4">
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+        {/* Name */}
         <div>
-          <label className="block text-sm font-medium text-gray-700">
-            Deal Name
-          </label>
+          <label>Name</label>
           <input
-            type="text"
             {...register("name", { required: "Name is required" })}
-            className="input"
+            className="input w-full"
           />
-          {errors.name && (
-            <p className="mt-1 text-sm text-red-600">{errors.name.message}</p>
-          )}
+          {errors.name && <p className="text-red-500">{errors.name.message}</p>}
         </div>
 
+        {/* Company */}
         <div>
-          <label className="block text-sm font-medium text-gray-700">
-            Company
-          </label>
-          <input
-            type="text"
-            {...register("company", { required: "Company is required" })}
-            className="input"
-          />
-          {errors.company && (
-            <p className="mt-1 text-sm text-red-600">
-              {errors.company.message}
-            </p>
-          )}
+          <label>Company (Optional)</label>
+          <select {...register("company")} className="input w-full">
+            <option value="">-- None --</option>
+            {companies.map((dep) => (
+              <option key={dep._id} value={dep._id}>
+                {dep.name}
+              </option>
+            ))}
+          </select>
         </div>
 
         <div>
@@ -98,11 +111,11 @@ const DealForm = ({ deal, onClose }: DealFormProps) => {
             className="input"
             {...register("stage", { required: "Stage is required" })}
           >
-            <option value="proposal">Proposal</option>
-            <option value="negotiation">Negotiation</option>
-            <option value="contract">Contract</option>
-            <option value="closed">Closed</option>
-            <option value="lost">Lost</option>
+            {dealStages.map((type) => (
+              <option key={type.value} value={type.value}>
+                {type.label}
+              </option>
+            ))}
           </select>
           {errors.stage && (
             <p className="mt-1 text-sm text-red-600">{errors.stage.message}</p>
@@ -153,7 +166,7 @@ const DealForm = ({ deal, onClose }: DealFormProps) => {
           </label>
           <input
             type="text"
-            {...register("name", { required: "Owner is required" })}
+            {...register("owner", { required: "Owner is required" })}
             className="input"
           />
           {errors.owner && (
@@ -162,12 +175,12 @@ const DealForm = ({ deal, onClose }: DealFormProps) => {
         </div>
       </div>
 
-      <div className="flex justify-end space-x-2">
+      <div className="flex justify-end gap-2">
         <button type="button" onClick={onClose} className="btn btn-secondary">
           Cancel
         </button>
         <button type="submit" className="btn btn-primary">
-          {deal ? "Update" : "Add"} Deal
+          {deal ? "Update" : "Create"} Deal
         </button>
       </div>
     </form>

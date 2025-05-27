@@ -52,7 +52,7 @@ const Dashboard = () => {
     {
       title: "Total Contacts",
       value: contacts?.length,
-      link: "/contacts",
+      link: "/hr/contacts",
       change: 12,
       icon: UserGroupIcon,
       color: "bg-blue-500",
@@ -60,7 +60,7 @@ const Dashboard = () => {
     {
       title: "Active Leads",
       value: leads?.length,
-      link: "/leads",
+      link: "/crm/leads",
       change: -2,
       icon: UserIcon,
       color: "bg-purple-500",
@@ -68,7 +68,7 @@ const Dashboard = () => {
     {
       title: "Open Deals",
       value: deals?.filter((deal) => deal.stage !== "closed").length,
-      link: "/deals",
+      link: "/crm/deals",
       change: 5,
       icon: CurrencyDollarIcon,
       color: "bg-green-500",
@@ -76,7 +76,7 @@ const Dashboard = () => {
     {
       title: "Pending Tasks",
       value: tasks?.filter((task) => task?.status === "pending").length,
-      link: "/tasks",
+      link: "/project/tasks",
       change: 0,
       icon: ClipboardDocumentListIcon,
       color: "bg-orange-500",

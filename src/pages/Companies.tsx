@@ -6,102 +6,80 @@ import {
   createColumnHelper,
   ColumnDef,
 } from "@tanstack/react-table";
-import { Contact } from "../utilities/types";
-import useContactsStore from "../store/contacts";
-import ContactForm from "../components/ContactForm";
+import { Company } from "../utilities/types";
+import useCompaniesStore from "../store/companies";
+import CompanyForm from "../components/CompanyForm";
 
-const columnHelper = createColumnHelper<Contact>();
+const columnHelper = createColumnHelper<Company>();
 
-const columns: ColumnDef<Contact, any>[] = [
-  columnHelper.accessor((row) => row.personType, {
-    id: "personType",
-    header: "Type",
+const columns: ColumnDef<Company, any>[] = [
+  columnHelper.accessor("ID", {
+    header: "Company ID",
     cell: (info) => info.getValue(),
   }),
-  columnHelper.accessor((row) => row.person?.name || "-", {
-    id: "name",
+  columnHelper.accessor("name", {
     header: "Name",
-    cell: (info) => info.getValue().toLowerCase(),
-  }),
-  columnHelper.accessor((row) => row.person?.email || "-", {
-    id: "email",
-    header: "Email",
-    cell: (info) => info.getValue().toLowerCase(),
-  }),
-   columnHelper.accessor((row) => row.person?.phone || "-", {
-    id: "phone",
-    header: "Phone",
     cell: (info) => info.getValue(),
   }),
-  columnHelper.accessor((row) => row.company, {
-    header: "Company",
-    cell: (info) => info.getValue()?.name?.toLowerCase() ?? "-",
+  columnHelper.accessor((row) => row.parentCompany, {
+    id: "parentCompany",
+    header: "Parent Company",
+    cell: (info) => info.getValue()?.name ?? "-",
   }),
-  columnHelper.accessor("status", {
+  columnHelper.accessor("isActive", {
     header: "Status",
-    cell: (info) => {
-      const status = info.getValue();
-      const color = {
-        active: "bg-green-100 text-green-800",
-        inactive: "bg-gray-100 text-gray-800",
-      }[status];
-      return (
-        <span className={`px-2 py-1 rounded-full text-xs font-medium ${color}`}>
-          {status}
-        </span>
-      );
-    },
+    cell: (info) => (info.getValue() ? "Active" : "Inactive"),
   }),
 ];
 
-const Contacts = () => {
-  const { contacts, fetchContacts, deleteContact, isFetched } =
-    useContactsStore();
-
-
+const CompanyPage = () => {
+  const { companies, fetchCompanies, deleteCompany, isFetched } =
+    useCompaniesStore();
 
   const [isModalOpen, setIsModalOpen] = useState(false);
-  const [selectedContact, setSelectedContact] = useState<Contact | undefined>();
+  const [selectedCompany, setSelectedCompany] = useState<
+    Company | undefined
+  >();
 
   useEffect(() => {
     if (!isFetched) {
-      fetchContacts();
+      fetchCompanies();
     }
-  }, [fetchContacts, isFetched]);
+  }, [fetchCompanies, isFetched]);
 
   const table = useReactTable({
-    data: contacts,
+    data: companies,
     columns,
     getCoreRowModel: getCoreRowModel(),
   });
 
-  const handleEdit = (txn: Contact) => {
-    setSelectedContact(txn);
+  const handleEdit = (dep: Company) => {
+    setSelectedCompany(dep);
     setIsModalOpen(true);
   };
 
   const handleDelete = (id: string) => {
-    if (window.confirm("Are you sure you want to delete this contact?")) {
-      deleteContact(id);
+    if (window.confirm("Are you sure you want to delete this company?")) {
+      deleteCompany(id);
     }
   };
 
   const handleAdd = () => {
-    setSelectedContact(undefined);
+    setSelectedCompany(undefined);
     setIsModalOpen(true);
   };
 
   const handleClose = () => {
     setIsModalOpen(false);
-    setSelectedContact(undefined);
+    setSelectedCompany(undefined);
   };
 
   return (
     <div className="p-6">
       <div className="flex justify-between items-center mb-6">
-        <h1 className="text-2xl font-bold text-gray-900">Contacts</h1>
+        <h1 className="text-2xl font-bold text-gray-900">Companies</h1>
         <button onClick={handleAdd} className="btn btn-primary">
-          Add Contact
+          Add Company
         </button>
       </div>
 
@@ -109,21 +87,10 @@ const Contacts = () => {
         <div className="fixed inset-0 bg-gray-500 bg-opacity-75 flex items-center justify-center p-4 z-50">
           <div className="bg-white rounded-lg max-h-screen overflow-y-auto w-full max-w-3xl p-6">
             <h2 className="text-xl font-semibold mb-4">
-              {selectedContact ? "Edit Contact" : "Add Contact"}
+              {selectedCompany ? "Edit Company" : "Add Company"}
             </h2>
-            <ContactForm
-              contact={
-                selectedContact
-                  ? {
-                      _id: selectedContact._id,
-                      ID: selectedContact.ID,
-                      personType: selectedContact.personType,
-                      person: selectedContact.person._id,
-                      company: selectedContact.company?._id ?? null,
-                      status: selectedContact.status,
-                    }
-                  : undefined
-              }
+            <CompanyForm
+              company={selectedCompany}
               onClose={handleClose}
             />
           </div>
@@ -183,4 +150,4 @@ const Contacts = () => {
   );
 };
 
-export default Contacts;
+export default CompanyPage;

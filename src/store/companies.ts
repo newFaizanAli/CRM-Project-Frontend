@@ -1,25 +1,25 @@
 import axios from "axios";
 import { create } from "zustand";
 import { ProjectURL } from "../utilities/const";
-import { Department } from "../utilities/types"; 
+import { Company } from "../utilities/types"; 
 import { toastError } from "../utilities/toastUtils";
 
-interface DepartmentsState {
-  departments: Department[];
+interface CompaniesState {
+  companies: Company[];
   isFetched: boolean;
-  fetchDepartments: () => Promise<void>;
-  addDepartment: (department: Omit<Department, "_id">) => Promise<void>;
-  updateDepartment: (id: string, department: Partial<Department>) => Promise<void>;
-  deleteDepartment: (id: string) => Promise<void>;
+  fetchCompanies: () => Promise<void>;
+  addCompany: (company: Omit<Company, "_id">) => Promise<void>;
+  updateCompany: (id: string, company: Partial<Company>) => Promise<void>;
+  deleteCompany: (id: string) => Promise<void>;
 }
 
-const DUMMY_STORAGE_KEY = "dummy_departments";
+const DUMMY_STORAGE_KEY = "dummy_companies";
 
-const useDepartmentsStore = create<DepartmentsState>((set, get) => ({
-  departments: [],
+const useCompaniesStore = create<CompaniesState>((set, get) => ({
+  companies: [],
   isFetched: false,
 
-  fetchDepartments: async () => {
+  fetchCompanies: async () => {
     const { isFetched } = get();
     if (isFetched) return;
 
@@ -27,13 +27,13 @@ const useDepartmentsStore = create<DepartmentsState>((set, get) => ({
 
     if (isDummy) {
       const stored = localStorage.getItem(DUMMY_STORAGE_KEY);
-      const dummyDepartments: Department[] = stored ? JSON.parse(stored) : [];
-      set({ departments: dummyDepartments, isFetched: true });
+      const dummyCompanies: Company[] = stored ? JSON.parse(stored) : [];
+      set({ companies: dummyCompanies, isFetched: true });
     } else {
       const token = localStorage.getItem("token");
       try {
-        const response = await axios.get<Department[]>(
-          `${ProjectURL}/api/departments`,
+        const response = await axios.get<Company[]>(
+          `${ProjectURL}/api/companies`,
           {
             headers: {
               Authorization: `Bearer ${token}`,
@@ -41,7 +41,7 @@ const useDepartmentsStore = create<DepartmentsState>((set, get) => ({
             },
           }
         );
-        set({ departments: response.data, isFetched: true });
+        set({ companies: response.data, isFetched: true });
       } catch (error) {
         const msg = error?.response?.data?.message;
         toastError(msg);
@@ -49,21 +49,21 @@ const useDepartmentsStore = create<DepartmentsState>((set, get) => ({
     }
   },
 
-  addDepartment: async (department) => {
+  addCompany: async (company) => {
     const isDummy = localStorage.getItem("accounttype") === "dummy";
 
     if (isDummy) {
       const state = get();
-      const newDepartment: Department = { _id: Date.now().toString(), ...department };
-      const updated = [...state.departments, newDepartment];
+      const newCompany: Company = { _id: Date.now().toString(), ...company };
+      const updated = [...state.companies, newCompany];
       localStorage.setItem(DUMMY_STORAGE_KEY, JSON.stringify(updated));
-      set({ departments: updated });
+      set({ companies: updated });
     } else {
       const token = localStorage.getItem("token");
       try {
-        const response = await axios.post<Department>(
-          `${ProjectURL}/api/departments`,
-          department,
+        const response = await axios.post<Company>(
+          `${ProjectURL}/api/companies`,
+          company,
           {
             headers: {
               Authorization: `Bearer ${token}`,
@@ -72,7 +72,7 @@ const useDepartmentsStore = create<DepartmentsState>((set, get) => ({
           }
         );
         set((state) => ({
-          departments: [...state.departments, response.data],
+          companies: [...state.companies, response.data],
         }));
       } catch (error) {
         const msg = error?.response?.data?.message;
@@ -81,32 +81,30 @@ const useDepartmentsStore = create<DepartmentsState>((set, get) => ({
     }
   },
 
-  updateDepartment: async (id, department) => {
+  updateCompany: async (id, company) => {
     const isDummy = localStorage.getItem("accounttype") === "dummy";
-
-    const { ...safeDepartment } = department;
+    const { ...safeCompany } = company;
 
     if (isDummy) {
       const state = get();
-      const updatedDepartments = state.departments.map((d) =>
-        d._id === id ? { ...d, ...safeDepartment } : d
+      const updatedCompanies = state.companies.map((c) =>
+        c._id === id ? { ...c, ...safeCompany } : c
       );
-      localStorage.setItem(DUMMY_STORAGE_KEY, JSON.stringify(updatedDepartments));
-      set({ departments: updatedDepartments });
+      localStorage.setItem(DUMMY_STORAGE_KEY, JSON.stringify(updatedCompanies));
+      set({ companies: updatedCompanies });
     } else {
       const token = localStorage.getItem("token");
       try {
-        const response = await axios.put<Department>(
-          `${ProjectURL}/api/departments/${id}`,
-          safeDepartment,
+        const response = await axios.put<Company>(
+          `${ProjectURL}/api/companies/${id}`,
+          safeCompany,
           {
             headers: { Authorization: `Bearer ${token}` },
           }
         );
-        
         set((state) => ({
-          departments: state.departments.map((d) =>
-            d._id === id ? response.data : d
+          companies: state.companies.map((c) =>
+            c._id === id ? response.data : c
           ),
         }));
       } catch (error) {
@@ -116,22 +114,22 @@ const useDepartmentsStore = create<DepartmentsState>((set, get) => ({
     }
   },
 
-  deleteDepartment: async (id) => {
+  deleteCompany: async (id) => {
     const isDummy = localStorage.getItem("accounttype") === "dummy";
 
     if (isDummy) {
       const state = get();
-      const updated = state.departments.filter((d) => d._id !== id);
+      const updated = state.companies.filter((c) => c._id !== id);
       localStorage.setItem(DUMMY_STORAGE_KEY, JSON.stringify(updated));
-      set({ departments: updated });
+      set({ companies: updated });
     } else {
       const token = localStorage.getItem("token");
       try {
-        await axios.delete(`${ProjectURL}/api/departments/${id}`, {
+        await axios.delete(`${ProjectURL}/api/companies/${id}`, {
           headers: { Authorization: `Bearer ${token}` },
         });
         set((state) => ({
-          departments: state.departments.filter((d) => d._id !== id),
+          companies: state.companies.filter((c) => c._id !== id),
         }));
       } catch (error) {
         const msg = error?.response?.data?.message;
@@ -141,4 +139,4 @@ const useDepartmentsStore = create<DepartmentsState>((set, get) => ({
   },
 }));
 
-export default useDepartmentsStore;
+export default useCompaniesStore;

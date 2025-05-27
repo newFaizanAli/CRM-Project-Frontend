@@ -4,46 +4,38 @@ import {
   getCoreRowModel,
   flexRender,
   createColumnHelper,
+  ColumnDef,
 } from "@tanstack/react-table";
-import useDealsStore from "../store/deal";
 import DealForm from "../components/DealForm";
-
-interface Deal {
-  _id: number;
-  name: string;
-  company: string;
-  value: number;
-  stage: 'proposal' | 'negotiation' | 'contract' | 'closed' | 'lost';
-  probability: number;
-  expectedCloseDate: string;
-  owner: string;
-}
+import useDealsStore from "../store/deal";
+import { Deal } from "../utilities/types";
 
 const columnHelper = createColumnHelper<Deal>();
 
-const columns = [
-  columnHelper.accessor('name', {
-    header: 'Deal Name',
-    cell: info => info.getValue(),
+const columns: ColumnDef<Deal, any>[] = [
+  columnHelper.accessor("name", {
+    header: "Name",
+    cell: (info) => info.getValue(),
   }),
-  columnHelper.accessor('company', {
-    header: 'Company',
-    cell: info => info.getValue(),
+  columnHelper.accessor((row) => row.company, {
+    header: "Company",
+    cell: (info) => info.getValue()?.name ?? "-",
   }),
-  columnHelper.accessor('value', {
-    header: 'Value',
-    cell: info => `$${info.getValue().toLocaleString()}`,
+
+  columnHelper.accessor("value", {
+    header: "Value",
+    cell: (info) => `$${info.getValue().toLocaleString()}`,
   }),
-  columnHelper.accessor('stage', {
-    header: 'Stage',
-    cell: info => {
+  columnHelper.accessor("stage", {
+    header: "Stage",
+    cell: (info) => {
       const stage = info.getValue();
       const color = {
-        proposal: 'bg-blue-100 text-blue-800',
-        negotiation: 'bg-yellow-100 text-yellow-800',
-        contract: 'bg-purple-100 text-purple-800',
-        closed: 'bg-green-100 text-green-800',
-        lost: 'bg-red-100 text-red-800',
+        proposal: "bg-blue-100 text-blue-800",
+        negotiation: "bg-yellow-100 text-yellow-800",
+        contract: "bg-purple-100 text-purple-800",
+        closed: "bg-green-100 text-green-800",
+        lost: "bg-red-100 text-red-800",
       }[stage];
       return (
         <span className={`px-2 py-1 rounded-full text-xs font-medium ${color}`}>
@@ -52,24 +44,25 @@ const columns = [
       );
     },
   }),
-  columnHelper.accessor('probability', {
-    header: 'Probability',
-    cell: info => `${info.getValue()}%`,
+  columnHelper.accessor("probability", {
+    header: "Probability",
+    cell: (info) => `${info.getValue()}%`,
   }),
-  columnHelper.accessor('expectedCloseDate', {
-    header: 'Expected Close',
-    cell: info => new Date(info.getValue()).toLocaleDateString(),
+  columnHelper.accessor("expectedCloseDate", {
+    header: "Expected Close",
+    cell: (info) => new Date(info.getValue()).toLocaleDateString(),
   }),
-  columnHelper.accessor('owner', {
-    header: 'Owner',
-    cell: info => info.getValue(),
+  columnHelper.accessor("owner", {
+    header: "Owner",
+    cell: (info) => info.getValue(),
   }),
 ];
 
-const Deals = () => {
-  const { deals, deleteDeal, fetchDeals, isFetched } = useDealsStore();
+const DealPage = () => {
+  const { deals, fetchDeals, deleteDeal, isFetched } = useDealsStore();
+
   const [isModalOpen, setIsModalOpen] = useState(false);
-  const [selectedDeal, setSelectedLead] = useState<Deal | undefined>();
+  const [selectedDeal, setSelectedDeal] = useState<Deal | undefined>();
 
   useEffect(() => {
     if (!isFetched) {
@@ -83,25 +76,25 @@ const Deals = () => {
     getCoreRowModel: getCoreRowModel(),
   });
 
+  const handleEdit = (deal: Deal) => {
+    setSelectedDeal(deal);
+    setIsModalOpen(true);
+  };
+
   const handleDelete = (id: number) => {
-    if (window.confirm("Are you sure you want to delete this lead?")) {
+    if (window.confirm("Are you sure you want to delete this deal?")) {
       deleteDeal(id);
     }
   };
 
-  const handleEdit = (contact: Deal) => {
-    setSelectedLead(contact);
-    setIsModalOpen(true);
-  };
-
   const handleAdd = () => {
-    setSelectedLead(undefined);
+    setSelectedDeal(undefined);
     setIsModalOpen(true);
   };
 
   const handleClose = () => {
     setIsModalOpen(false);
-    setSelectedLead(undefined);
+    setSelectedDeal(undefined);
   };
 
   return (
@@ -114,8 +107,8 @@ const Deals = () => {
       </div>
 
       {isModalOpen && (
-        <div className="fixed inset-0 bg-gray-500 bg-opacity-75 flex items-center justify-center p-4">
-          <div className="bg-white rounded-lg p-6 max-w-2xl w-full">
+        <div className="fixed inset-0 bg-gray-500 bg-opacity-75 flex items-center justify-center p-4 z-50">
+          <div className="bg-white rounded-lg max-h-screen overflow-y-auto w-full max-w-3xl p-6">
             <h2 className="text-xl font-semibold mb-4">
               {selectedDeal ? "Edit Deal" : "Add Deal"}
             </h2>
@@ -177,4 +170,4 @@ const Deals = () => {
   );
 };
 
-export default Deals;
+export default DealPage;

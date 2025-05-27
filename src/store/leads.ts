@@ -1,11 +1,11 @@
 import axios from "axios";
 import { create } from "zustand";
 import { ProjectURL } from "../utilities/const";
-import { Lead, LeadInput } from "../utilities/types";
+import { LeadInput } from "../utilities/types";
 import { toastError } from "../utilities/toastUtils";
 
 interface LeadsState {
-  leads: Lead[];
+  leads: LeadInput[];
   isFetched: boolean;
 
   fetchLeads: () => Promise<void>;
@@ -30,7 +30,7 @@ const useLeadsStore = create<LeadsState>((set, get) => ({
 
     if (isDummy) {
       const stored = localStorage.getItem(DUMMY_STORAGE_KEY);
-      const dummyLeads: Lead[] = stored ? JSON.parse(stored) : [];
+      const dummyLeads: LeadInput[] = stored ? JSON.parse(stored) : [];
       set({ leads: dummyLeads, isFetched: true });
     } else {
       try {
@@ -55,7 +55,7 @@ const useLeadsStore = create<LeadsState>((set, get) => ({
     if (isDummy) {
       const state = get();
       const newId = Date.now();
-      const newLead: Lead = { _id: newId, ...lead };
+      const newLead: LeadInput = { _id: newId, ...lead };
       const updated = [...state.leads, newLead];
       localStorage.setItem(DUMMY_STORAGE_KEY, JSON.stringify(updated));
       set({ leads: updated });

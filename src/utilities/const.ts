@@ -16,13 +16,13 @@ export const unitTypes = [
   { label: "Packet", value: "pkt" },
   { label: "Dozen", value: "dozen" },
   { label: "Meter", value: "m" },
-  { label: "Centimeter", value: "cm" }, 
+  { label: "Centimeter", value: "cm" },
   { label: "Inch", value: "inch" },
   { label: "Foot", value: "ft" },
-  { label: "Roll", value: "roll" }, 
+  { label: "Roll", value: "roll" },
   { label: "Bag", value: "bag" },
   { label: "Carton", value: "carton" },
-  { label: "Can", value: "can" }, 
+  { label: "Can", value: "can" },
   { label: "Bottle", value: "bottle" },
   { label: "Tray", value: "tray" },
 ];
@@ -42,21 +42,18 @@ export const purchaseOrderStatus = [
   { label: "Cancelled", value: "Cancelled" },
 ];
 
-
 export const receiptStatus = [
   { label: "Draft", value: "Draft" },
   { label: "Received", value: "Received" },
   { label: "Cancelled", value: "Cancelled" },
 ];
 
-
 export const invoicesStatus = [
-  { label: "Unpaid", value: "Unpaid" }, 
+  { label: "Unpaid", value: "Unpaid" },
   { label: "Partially Paid", value: "Partially Paid" },
-    { label: "Paid", value: "Paid" },
+  { label: "Paid", value: "Paid" },
   { label: "Cancelled", value: "Cancelled" },
 ];
-
 
 export const saleOrderStatus = [
   { label: "Pending", value: "Pending" },
@@ -83,3 +80,29 @@ export const employeeTypes = [
   { label: "Casual", value: "Casual" },
   { label: "Remote", value: "Remote" },
 ];
+
+export const dealStages = [
+  { label: "Proposal", value: "proposal" },
+  { label: "Negotiation", value: "negotiation" },
+  { label: "Contract", value: "contract" },
+  { label: "Closed", value: "closed" },
+  { label: "Lost", value: "lost" },
+];
+
+
+export const leadSource = [
+  { label: "website", value: "website" },
+  { label: "referral", value: "negotiation" },
+  { label: "social", value: "contract" },
+  { label: "other", value: "closed" },
+];
+
+
+export const leadStatus = [
+  { label: "New", value: "new" },
+  { label: "Contacted", value: "contacted" },
+  { label: "Qualified", value: "qualified" },
+  { label: "Lost", value: "lost" },
+];
+
+

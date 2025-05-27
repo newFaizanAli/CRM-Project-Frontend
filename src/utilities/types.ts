@@ -35,6 +35,7 @@ export interface Employee {
   email: string;
   ID?: string;
   types: EmployeeType;
+  phone: string;
 }
 
 // Form data without _id and ID
@@ -43,21 +44,8 @@ export type EmployeeFormData = Omit<Employee, "_id" | "ID">;
 // Form values when editing
 export type EmployeeFormWithId = EmployeeFormData & { _id: number };
 
-// -------------Lead------------
 
-export interface LeadInput {
-  name: string;
-  email: string;
-  phone: string;
-  company: string;
-  status: "new" | "contacted" | "qualified" | "lost";
-  source: "website" | "referral" | "social" | "other";
-  value: number;
-}
-
-export interface Lead extends LeadInput {
-  _id: number;
-}
+// -------------Product----------
 
 export interface Product {
   _id?: string;
@@ -597,3 +585,127 @@ export interface ProjectInput {
 export interface Project extends ProjectInput {
   _id: string;
 }
+
+
+
+// --------- Company -----------
+
+export interface Company {
+  _id?: string;
+  ID?: string;
+  name: string;
+  parentCompany?: {
+    _id: string;
+    name: string;
+  } | null;
+  isActive: boolean;
+}
+
+export type CompanyFormData = Omit<
+  Company,
+  "_id" | "parentCompany"
+> & {
+  parentCompany?: string | null;
+};
+
+export type CompanyWithId = CompanyFormData & {
+  _id: string;
+};
+
+
+// ---- Deals --------
+
+
+export interface Deal {
+  _id?: number;
+  name: string;
+  company?: {
+    _id: string;
+    name: string;
+  } | null;
+  value: number;
+  stage: 'proposal' | 'negotiation' | 'contract' | 'closed' | 'lost';
+  probability: number;
+  expectedCloseDate: string;
+  owner: string;
+}
+
+export type DealFormData = Omit<
+  Deal,
+  "_id" | "company"
+> & {
+  company?: string | null;
+};
+
+
+export type DealWithId = DealFormData & {
+  _id: string;
+};
+
+
+// -------------Lead------------
+
+export interface LeadInput {
+  _id?: number;
+  name: string;
+  email: string;
+  phone: string;
+  company:  {
+    _id: string;
+    name: string;
+  } | null;
+  status: "new" | "contacted" | "qualified" | "lost";
+  source: "website" | "referral" | "social" | "other";
+  value: number;
+}
+
+
+export type LeadFormData = Omit<
+  LeadInput,
+  "_id" | "company"
+> & {
+  company?: string | null;
+};
+
+
+export type LeadWithId = LeadFormData & {
+  _id: string;
+};
+
+
+
+// -----------Contact---------
+
+
+export type PersonType = "customers" | "employees" | "suppliers";
+
+export interface Contact {
+  _id?: string;
+  ID?: string;
+  personType: PersonType;
+  person: {
+    _id: string;
+    name: string;
+    ID: string;
+    phone: string;
+    email: string;
+  };
+   company:  {
+    _id: string;
+    name: string;
+  } | null;
+   status: 'active' | 'inactive';
+}
+
+export type ContactFormData = Omit<
+  Contact,
+  "_id" | "person" | "company"
+> & {
+  person: string;
+  company?: string | null;
+};
+
+
+export type ConactWithId = ContactFormData & {
+  _id: string;
+};
