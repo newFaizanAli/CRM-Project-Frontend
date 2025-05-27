@@ -79,6 +79,7 @@ const Employees = () => {
       hireDate: employee.hireDate,
       email: employee.email,
       types: employee.types,
+      phone: employee.phone,
     };
     setEmployeeTask(formData);
     setIsModalOpen(true);
