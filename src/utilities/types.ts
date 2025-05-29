@@ -44,7 +44,6 @@ export type EmployeeFormData = Omit<Employee, "_id" | "ID">;
 // Form values when editing
 export type EmployeeFormWithId = EmployeeFormData & { _id: number };
 
-
 // -------------Product----------
 
 export interface Product {
@@ -81,7 +80,6 @@ export interface TaskInput {
 export interface Task extends TaskInput {
   _id: number;
 }
-
 
 // ------- warehouse -------
 
@@ -579,14 +577,12 @@ export interface ProjectInput {
     _id: string;
     name: string;
   } | null;
-  type: string,
+  type: string;
 }
 
 export interface Project extends ProjectInput {
   _id: string;
 }
-
-
 
 // --------- Company -----------
 
@@ -601,10 +597,7 @@ export interface Company {
   isActive: boolean;
 }
 
-export type CompanyFormData = Omit<
-  Company,
-  "_id" | "parentCompany"
-> & {
+export type CompanyFormData = Omit<Company, "_id" | "parentCompany"> & {
   parentCompany?: string | null;
 };
 
@@ -612,9 +605,7 @@ export type CompanyWithId = CompanyFormData & {
   _id: string;
 };
 
-
 // ---- Deals --------
-
 
 export interface Deal {
   _id?: number;
@@ -624,24 +615,19 @@ export interface Deal {
     name: string;
   } | null;
   value: number;
-  stage: 'proposal' | 'negotiation' | 'contract' | 'closed' | 'lost';
+  stage: "proposal" | "negotiation" | "contract" | "closed" | "lost";
   probability: number;
   expectedCloseDate: string;
   owner: string;
 }
 
-export type DealFormData = Omit<
-  Deal,
-  "_id" | "company"
-> & {
+export type DealFormData = Omit<Deal, "_id" | "company"> & {
   company?: string | null;
 };
-
 
 export type DealWithId = DealFormData & {
   _id: string;
 };
-
 
 // -------------Lead------------
 
@@ -650,7 +636,7 @@ export interface LeadInput {
   name: string;
   email: string;
   phone: string;
-  company:  {
+  company: {
     _id: string;
     name: string;
   } | null;
@@ -659,23 +645,15 @@ export interface LeadInput {
   value: number;
 }
 
-
-export type LeadFormData = Omit<
-  LeadInput,
-  "_id" | "company"
-> & {
+export type LeadFormData = Omit<LeadInput, "_id" | "company"> & {
   company?: string | null;
 };
-
 
 export type LeadWithId = LeadFormData & {
   _id: string;
 };
 
-
-
 // -----------Contact---------
-
 
 export type PersonType = "customers" | "employees" | "suppliers";
 
@@ -690,22 +668,109 @@ export interface Contact {
     phone: string;
     email: string;
   };
-   company:  {
+  company: {
     _id: string;
     name: string;
   } | null;
-   status: 'active' | 'inactive';
+  status: "active" | "inactive";
 }
 
-export type ContactFormData = Omit<
-  Contact,
-  "_id" | "person" | "company"
-> & {
+export type ContactFormData = Omit<Contact, "_id" | "person" | "company"> & {
   person: string;
   company?: string | null;
 };
 
-
 export type ConactWithId = ContactFormData & {
   _id: string;
 };
+
+// --------- Attendance -----------
+
+export type AttendanceStatus =
+  | "Present"
+  | "Absent"
+  | "Half Day"
+  | "On Leave"
+  | "Holiday";
+
+export type AttendanceShift = "Day" | "Night" | "General";
+
+export interface Attendance {
+  _id?: string;
+  employee?: {
+    _id: string;
+    name: string;
+    ID: string;
+  } | null;
+  date: string;
+  status: AttendanceStatus;
+  checkInTime: string;
+  checkOutTime: string;
+  shift: AttendanceShift;
+  remarks: string;
+}
+
+export type AttendanceFormData = Omit<Attendance, "_id" | "employee"> & {
+  employee?: string | null;
+};
+
+export type AttendanceWithId = AttendanceFormData & {
+  _id: string;
+};
+
+// --------- Leave -----------
+
+export type LeaveTypes =
+  | "Casual"
+  | "Sick"
+  | "Earned"
+  | "Unpaid"
+  | "Maternity"
+  | "Other";
+
+export type LeaveStatus = "Pending" | "Approved" | "Rejected" | "Cancelled";
+
+export interface Leave {
+  _id?: string;
+  employee?: {
+    _id: string;
+    name: string;
+    ID: string;
+  } | null;
+  leaveType: LeaveTypes;
+  fromDate: string;
+  toDate: string;
+  reason: string;
+  status: LeaveStatus;
+  applicationDate: string;
+}
+
+export type LeaveFormData = Omit<Leave, "_id" | "employee"> & {
+  employee?: string | null;
+};
+
+export type LeaveWithId = LeaveFormData & {
+  _id: string;
+};
+
+// --------- Salary Component -----------
+
+export type SalaryCompTypes = "Earning" | "Deduction";
+
+export type SalaryCompAmountTypes = "Fixed" | "Percentage";
+
+export interface SalaryComponent {
+  _id?: string; 
+  name: string; 
+  type: SalaryCompTypes;
+  amountType: SalaryCompAmountTypes; 
+  value: number;
+  isActive: boolean; 
+  description: string; 
+}
+
+
+export type SalaryComponentFormData = Omit<SalaryComponent, "_id" | "ID">;
+
+// Form values when editing
+export type SalaryComponentFormWithId = SalaryComponentFormData & { _id: string };

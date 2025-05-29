@@ -89,7 +89,6 @@ export const dealStages = [
   { label: "Lost", value: "lost" },
 ];
 
-
 export const leadSource = [
   { label: "website", value: "website" },
   { label: "referral", value: "negotiation" },
@@ -97,12 +96,72 @@ export const leadSource = [
   { label: "other", value: "closed" },
 ];
 
-
 export const leadStatus = [
   { label: "New", value: "new" },
   { label: "Contacted", value: "contacted" },
   { label: "Qualified", value: "qualified" },
   { label: "Lost", value: "lost" },
+];
+
+export const attendanceStatus = [
+  { label: "Present", value: "Present" },
+  { label: "Absent", value: "Absent" },
+  { label: "Half Day", value: "Half Day" },
+  { label: "On Leave", value: "On Leave" },
+  { label: "Holiday", value: "Holiday" },
+];
+
+export const attendanceShift = [
+  { label: "Day", value: "Day" },
+  { label: "Night", value: "Night" },
+  { label: "General", value: "General" },
+];
+
+export const leavesTypes = [
+  { label: "Casual", value: "Casual" },
+  { label: "Sick", value: "Sick" },
+  { label: "Earned", value: "Earned" },
+  { label: "Unpaid", value: "Unpaid" },
+  { label: "Maternity", value: "Maternity" },
+  { label: "Other", value: "Other" },
+];
+
+export const leavesStatus = [
+  { label: "Pending", value: "Pending" },
+  { label: "Approved", value: "Approved" },
+  { label: "Rejected", value: "Rejected" },
+  { label: "Cancelled", value: "Cancelled" },
+];
+
+export const salaryCompTypes = [
+  { label: "Earning", value: "Earning" },
+  { label: "Deduction", value: "Deduction" },
+];
+
+export const salaryCompAmountTypes = [
+  { label: "Fixed", value: "Fixed" },
+  { label: "Percentage", value: "Percentage" },
+];
+
+
+export const salaryCompEarningType = [
+  { label: "HRA (House Rent)", value: "HRA" },
+  { label: "Conveyance", value: "Conveyance" },
+  { label: "Medical Allowance", value: "Medical Allowance" },
+  { label: "Special Allowance", value: "Special Allowance" },
+  { label: "Bonus", value: "Bonus" },
+  { label: "Overtime", value: "Overtime" },
+  { label: "Commission", value: "Commission" },
+  { label: "Arrear", value: "Arrear" },
+];
+
+export const salaryCompDeductionType = [
+  { label: "Provident Fund (PF)", value: "Provident Fund" },
+  { label: "Professional Tax", value: "Professional Tax" },
+  { label: "Income Tax", value: "Income Tax" },
+  { label: "Loan Deduction", value: "Loan Deduction" },
+  { label: "Absent Deduction", value: "Absent Deduction" },
+  { label: "Advance Salary", value: "Advance Salary" },
 ];
 
 

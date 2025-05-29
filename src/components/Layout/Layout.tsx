@@ -8,7 +8,8 @@ import {
   ShoppingCartIcon,
   BanknotesIcon,
   BuildingLibraryIcon,
-  PuzzlePieceIcon
+  PuzzlePieceIcon,
+  BriefcaseIcon 
 } from "@heroicons/react/24/outline";
 import Header from "../Header";
 import useInitialData from "../../hooks/useInitialData";
@@ -27,6 +28,7 @@ const Layout = () => {
     { path: "/sale", label: "Sales", icon: BanknotesIcon },
     { path: "/stock", label: "Stocks", icon: CubeIcon },
     { path: "/hr", label: "HR", icon: UserIcon },
+    { path: "/payroll", label: "Payroll", icon: BriefcaseIcon  },
     { path: "/project", label: "Project", icon: ClipboardDocumentListIcon },
   ];
 

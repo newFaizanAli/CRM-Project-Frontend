@@ -17,6 +17,7 @@ import AccountLayout from "./components/Layout/AccountLayout";
 import HRLayout from "./components/Layout/HRLayout";
 import ProjectLayout from "./components/Layout/ProjectLayout";
 import CRMLayout from "./components/Layout/CRMLayout";
+import PayrollLayout from "./components/Layout/PayrollLayout";
 
 import PurchaseDashboard from "./pages/PurchaseDashboard";
 import StockDashboard from "./pages/StockDashboard";
@@ -24,6 +25,7 @@ import SaleDashboard from "./pages/SaleDashboard";
 import HRDashboard from "./pages/HRDashboard";
 import ProjectDashboard from "./pages/ProjectDashboard";
 import CRMDashboard from "./pages/CRMDashboard";
+import PayrollDashboard from "./pages/dashboard/PayrollDashboard";
 
 import Login from "./pages/Login";
 import Signup from "./pages/Signup";
@@ -64,10 +66,18 @@ import AccountLedger from "./pages/account/AccountLedger";
 // HR
 import DepartmentPage from "./pages/Departments";
 import Employees from "./pages/Employees";
+
+import AttendancePage from "./pages/hr/attendance/Attendance";
+import LeavePage from "./pages/hr/attendance/Leave";
+
 // Project
 import Tasks from "./pages/Tasks";
 import ProjectPage from "./pages/Project";
 import CompanyPage from "./pages/Companies";
+import SalaryComponentPage from "./pages/payroll/SalaryComponent";
+import SalaryStructurePage from "./pages/payroll/SalaryStructure";
+import SalaryAssignmentPage from "./pages/payroll/SalaryAssignment";
+import SalarySlipPage from "./pages/payroll/SalarySlip";
 
 const queryClient = new QueryClient();
 
@@ -83,7 +93,6 @@ function App() {
           <Route element={<ProtectedRoute />}>
             <Route element={<Layout />}>
               <Route path="/dashboard" element={<Dashboard />} />
-
 
               <Route path="/crm" element={<CRMLayout />}>
                 <Route index element={<CRMDashboard />} />
@@ -131,12 +140,23 @@ function App() {
                 <Route path="departments" element={<DepartmentPage />} />
                 <Route path="companies" element={<CompanyPage />} />
                 <Route path="contacts" element={<Contacts />} />
+                {/* Attendance */}
+                <Route path="attendances" element={<AttendancePage />} />
+                <Route path="leaves" element={<LeavePage />} />
               </Route>
 
               <Route path="/project" element={<ProjectLayout />}>
                 <Route index element={<ProjectDashboard />} />
                 <Route path="projects" element={<ProjectPage />} />
                 <Route path="tasks" element={<Tasks />} />
+              </Route>
+
+              <Route path="/payroll" element={<PayrollLayout />}>
+                <Route index element={<PayrollDashboard />} />
+                <Route path="salary-comonent" element={<SalaryComponentPage />} />
+                <Route path="salary-structure" element={<SalaryStructurePage />} />
+                <Route path="salary-assignment" element={<SalaryAssignmentPage />} />
+                <Route path="salary-slip" element={<SalarySlipPage />} />
               </Route>
 
               <Route path="/calendar" element={<Calendar />} />

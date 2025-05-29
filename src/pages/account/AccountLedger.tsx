@@ -43,6 +43,7 @@ const columns: ColumnDef<Transaction, any>[] = [
 
 const AccountLedger = () => {
   const { transactions, fetchTransactions, isFetched } = useTransactionStore();
+  
   const [filterOptions, setFilterOption] = useState({
     partyFilter: "",
     typeFilter: "",

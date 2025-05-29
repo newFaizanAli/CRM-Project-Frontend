@@ -4,10 +4,12 @@ import {
   IdentificationIcon,
   BuildingLibraryIcon,
   UserGroupIcon,
-  BuildingOfficeIcon
+  BuildingOfficeIcon,
+  CalendarDaysIcon,
+  ClipboardDocumentCheckIcon,
 } from "@heroicons/react/24/outline";
 
-const accountModules = [
+const mainModules = [
   {
     name: "Departments",
     icon: <BuildingLibraryIcon className="h-8 w-8" />,
@@ -30,6 +32,28 @@ const accountModules = [
   },
 ];
 
+const attendanceModules = [
+  {
+    name: "Attendance",
+    icon: <ClipboardDocumentCheckIcon className="h-8 w-8" />,
+    path: "/hr/attendances",
+  },
+  {
+    name: "Leave & Request",
+    icon: <CalendarDaysIcon className="h-8 w-8" />,
+    path: "/hr/leaves",
+  },
+];
+
 export default function HRDashboard() {
-  return <DashboardWidgets data={accountModules} title={"HR"} />;
+  return (
+    <>
+      <DashboardWidgets data={mainModules} title={"HR"} />
+      <DashboardWidgets
+        titleTextSize={"text-lg"}
+        data={attendanceModules}
+        title={"Attendance"}
+      />
+    </>
+  );
 }

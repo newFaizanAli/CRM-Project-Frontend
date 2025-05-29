@@ -1,10 +1,15 @@
 import { Link } from "react-router-dom";
 
+type DashboardWidgetsProps = {
+  data: any;
+  title: any;
+  titleTextSize?: any; 
+};
 
-const DashboardWidgets = ({ data, title }) => {
+const DashboardWidgets = ({ data, title, titleTextSize } : DashboardWidgetsProps) => {
   return (
     <div className="p-8">
-      <h1 className="text-2xl font-bold mb-6">{title}</h1>
+      <h1 className={`${titleTextSize ? titleTextSize : 'text-2xl'} font-bold mb-6`}>{title}</h1>
       <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6">
         {data.map((module : any) => (
           <Link
