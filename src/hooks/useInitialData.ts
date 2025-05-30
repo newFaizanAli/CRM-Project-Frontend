@@ -23,6 +23,10 @@ import useTransactionStore from "../store/transactions";
 import useDepartmentsStore from "../store/departments";
 import useProjectsStore from "../store/projects";
 import useCompaniesStore from "../store/companies";
+import useSalaryComponentStore from "../store/payroll/salary-compoents";
+import useSalaryStructureStore from "../store/payroll/salary-structure";
+import useAttendanceStore from "../store/hr/attendances";
+import useLeaveStore from "../store/hr/leaves";
 
 const useInitialData = () => {
   // crm
@@ -59,18 +63,23 @@ const useInitialData = () => {
   const { fetchDepartments } = useDepartmentsStore();
   const { fetchContacts } = useContactsStore();
   const { fetchCompanies } = useCompaniesStore();
+  const { fetchAttendances } = useAttendanceStore();
+  const { fetchLeaves } = useLeaveStore();
 
   // projects
 
   const { fetchProjects } = useProjectsStore();
   const { fetchTasks } = useTasksStore();
 
+  // payroll
+  const { fetchSalaryComponents } = useSalaryComponentStore();
+  const { fetchSalaryStructures } = useSalaryStructureStore();
+
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
     const fetchAll = async () => {
       await Promise.all([
-        fetchContacts(),
         fetchDeals(),
         fetchLeads(),
 
@@ -99,6 +108,12 @@ const useInitialData = () => {
         fetchEmployees(),
         fetchDepartments(),
         fetchCompanies(),
+        fetchContacts(),
+        fetchAttendances(),
+        fetchLeaves(),
+
+        fetchSalaryComponents(),
+        fetchSalaryStructures(),
       ]);
       setLoading(false);
     };

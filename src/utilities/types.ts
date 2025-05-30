@@ -760,6 +760,7 @@ export type SalaryCompTypes = "Earning" | "Deduction";
 export type SalaryCompAmountTypes = "Fixed" | "Percentage";
 
 export interface SalaryComponent {
+  ID?: string;
   _id?: string; 
   name: string; 
   type: SalaryCompTypes;
@@ -774,3 +775,36 @@ export type SalaryComponentFormData = Omit<SalaryComponent, "_id" | "ID">;
 
 // Form values when editing
 export type SalaryComponentFormWithId = SalaryComponentFormData & { _id: string };
+
+
+// -----------Salary Structure--------------
+
+export interface SalaryStructureComp {
+  component: string; 
+  type: string;
+  value: number;
+  ID: string;
+}
+
+export interface SalaryStructure {
+  _id?: string;
+  name: string;
+  base: number;
+  employee: {
+    _id: string;
+    name: string;
+  };
+  isActive: boolean; 
+  effectiveFrom: string;
+  remarks?: string;
+  components: SalaryStructureComp[];
+}
+
+
+export type SalaryStructureFormData = Omit<SalaryStructure, "_id" | "employee"> & {
+  employee?: string | null;
+};
+
+export type SalaryStructureFormWithId = SalaryStructureFormData & { _id: string };
+
+

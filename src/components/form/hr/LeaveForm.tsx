@@ -38,7 +38,6 @@ const LeaveForm = ({ leave, onClose }: LeaveFormProps) => {
           status: "Pending",
           leaveType: "Casual",
           reason: "",
-
           applicationDate: new Date().toISOString().slice(0, 10),
           fromDate: new Date().toISOString().slice(0, 10),
           toDate: "",

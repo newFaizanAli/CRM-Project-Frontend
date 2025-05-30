@@ -13,6 +13,10 @@ import SalaryComponentForm from "../../components/form/payroll/SalaryCompoenentF
 const columnHelper = createColumnHelper<SalaryComponent>();
 
 const columns: ColumnDef<SalaryComponent, any>[] = [
+  columnHelper.accessor("ID", {
+    header: "Code",
+    cell: (info) => info.getValue(),
+  }),
   columnHelper.accessor("name", {
     header: "Name",
     cell: (info) => info.getValue(),
