@@ -143,7 +143,6 @@ export const salaryCompAmountTypes = [
   { label: "Percentage", value: "Percentage" },
 ];
 
-
 export const salaryCompEarningType = [
   { label: "HRA (House Rent)", value: "HRA" },
   { label: "Conveyance", value: "Conveyance" },
@@ -164,4 +163,13 @@ export const salaryCompDeductionType = [
   { label: "Advance Salary", value: "Advance Salary" },
 ];
 
+export const salarySlipStatus = [
+  { label: "Draft", value: "Draft" },
+  { label: "Final", value: "Final" },
+];
 
+export const asstesDepreciationMethods = [
+  { label: "Straight Line", value: "Straight Line" },
+  { label: "Declining Balance", value: "Declining Balance" },
+  { label: "None", value: "None" },
+];

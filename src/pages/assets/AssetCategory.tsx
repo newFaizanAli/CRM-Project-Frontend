@@ -6,110 +6,94 @@ import {
   createColumnHelper,
   ColumnDef,
 } from "@tanstack/react-table";
-import { SalaryStructure } from "../../utilities/types";
-import useSalaryStructureStore from "../../store/payroll/salary-structure";
-import SalaryStructureForm from "../../components/form/payroll/SalaryStructureForm";
+import { AssetCategory } from "../../utilities/types";
+import useAssetCategoryStore from "../../store/asset/asset-category";
+import AssetCategoryForm from "../../components/form/assets/AssetCategory";
 
-const columnHelper = createColumnHelper<SalaryStructure>();
+const columnHelper = createColumnHelper<AssetCategory>();
 
-const columns: ColumnDef<SalaryStructure, any>[] = [
-  columnHelper.accessor("ID", {
+const columns: ColumnDef<AssetCategory, any>[] = [
+   columnHelper.accessor("ID", {
     header: "Code",
     cell: (info) => info.getValue(),
   }),
-  columnHelper.accessor((row) => row.employee, {
-    id: "employeeInfo",
-    header: "Employee",
-    cell: (info) => {
-      const emp = info.getValue();
-      return emp ? `${emp.name}` : "-";
-    },
+  columnHelper.accessor("name", {
+    header: "Category Name",
+    cell: (info) => info.getValue(),
   }),
-  columnHelper.accessor("effectiveFrom", {
-    header: "Effective from",
-    cell: (info) =>
-      new Date(info.getValue()).toLocaleDateString("en-GB", {
-        day: "2-digit",
-        month: "2-digit",
-        year: "numeric",
-      }),
+ 
+  
+  columnHelper.accessor("isActive", {
+    header: "Status",
+    cell: (info) => (info.getValue() ? "Active" : "Inactive"),
   }),
 ];
 
-const SalaryStructurePage = () => {
-  const {
-    salaryStructures,
-    deleteSalaryStructure,
-    fetchSalaryStructures,
-    isFetched,
-  } = useSalaryStructureStore();
+const AssetCategoryPage = () => {
+  const { assetCategories, deleteAssetCategory, fetchAssetCategories, isFetched } =
+    useAssetCategoryStore();
 
   const [isModalOpen, setIsModalOpen] = useState(false);
-  const [selectedStructure, setselectedStructure] = useState<
-    SalaryStructure | undefined
+  const [selectedCategory, setSelectedCategory] = useState<
+    AssetCategory | undefined
   >();
 
   useEffect(() => {
     if (!isFetched) {
-      fetchSalaryStructures();
+      fetchAssetCategories();
     }
-  }, [fetchSalaryStructures, isFetched]);
-
+  }, [isFetched, fetchAssetCategories]);
 
   const table = useReactTable({
-    data: salaryStructures,
+    data: assetCategories,
     columns,
     getCoreRowModel: getCoreRowModel(),
   });
 
-  const handleDelete = (id: string) => {
-    if (
-      window.confirm("Are you sure you want to delete this salary structure?")
-    ) {
-      deleteSalaryStructure(String(id));
+  const handleDelete = (id : string) => {
+    if (confirm("Are you sure you want to delete this asset category?")) {
+      deleteAssetCategory(id);
     }
   };
 
-  const handleEdit = (struc: SalaryStructure) => {
-    setselectedStructure(struc);
+  const handleEdit = (category: AssetCategory) => {
+    setSelectedCategory(category);
     setIsModalOpen(true);
   };
 
   const handleAdd = () => {
-    setselectedStructure(undefined);
+    setSelectedCategory(undefined);
     setIsModalOpen(true);
   };
 
   const handleClose = () => {
+    setSelectedCategory(undefined);
     setIsModalOpen(false);
-    setselectedStructure(undefined);
   };
 
   return (
     <div className="p-6">
+      {/* Header */}
       <div className="flex justify-between items-center mb-6">
-        <h1 className="text-2xl font-bold text-gray-900">Salary Structures</h1>
+        <h1 className="text-2xl font-bold text-gray-900">Assets Categories</h1>
         <button onClick={handleAdd} className="btn btn-primary">
-          Add Salary Structure
+          Add Category
         </button>
       </div>
 
+      {/* Modal */}
       {isModalOpen && (
-        <div className="fixed inset-0 bg-gray-500 bg-opacity-75 flex items-center justify-center p-4 z-50">
-          <div className="bg-white rounded-lg max-h-screen overflow-y-auto w-full max-w-3xl p-6">
+        <div className="fixed inset-0 bg-black bg-opacity-40 flex items-center justify-center z-50 p-4">
+          <div className="bg-white rounded-lg p-6 w-full max-w-xl">
             <h2 className="text-xl font-semibold mb-4">
-              {selectedStructure
-                ? "Edit Salary Structure"
-                : "Add Salary Structure"}
+              {selectedCategory ? "Edit Category" : "Add Category"}
             </h2>
-            <SalaryStructureForm
-              salary_structure={selectedStructure}
-              onClose={handleClose}
-            />
+            <AssetCategoryForm category={selectedCategory} onClose={handleClose} />
           </div>
         </div>
       )}
 
+      {/* Table */}
       <div className="bg-white shadow rounded-lg overflow-hidden">
         <table className="min-w-full divide-y divide-gray-200">
           <thead className="bg-gray-50">
@@ -163,4 +147,4 @@ const SalaryStructurePage = () => {
   );
 };
 
-export default SalaryStructurePage;
+export default AssetCategoryPage;

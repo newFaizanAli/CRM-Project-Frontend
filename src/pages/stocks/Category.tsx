@@ -12,29 +12,7 @@ import { Category } from "../../utilities/types";
 
 const columnHelper = createColumnHelper<Category>();
 
-// const columns = [
-//   columnHelper.accessor("name", {
-//     header: "Category Name",
-//     cell: (info) => info.getValue(),
-//   }),
-//   columnHelper.accessor("description", {
-//     header: "Description",
-//     cell: (info) => info.getValue(),
-//   }),
-//   columnHelper.accessor("parentCategory", {
-//     header: "Parent Category",
-//     cell: (info) => {
-//       const value = info.getValue();
-//       if (!value) return "-";
-//       if (typeof value === "string") return value;
-//       return value?.name ?? "-";
-//     },
-//   }),
-//   columnHelper.accessor("isActive", {
-//     header: "Status",
-//     cell: (info) => (info.getValue() ? "Active" : "Inactive"),
-//   }),
-// ];
+
 
 
 const columns: ColumnDef<Category, any>[] = [

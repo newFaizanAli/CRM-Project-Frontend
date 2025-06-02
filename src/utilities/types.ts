@@ -761,32 +761,35 @@ export type SalaryCompAmountTypes = "Fixed" | "Percentage";
 
 export interface SalaryComponent {
   ID?: string;
-  _id?: string; 
-  name: string; 
+  _id?: string;
+  name: string;
   type: SalaryCompTypes;
-  amountType: SalaryCompAmountTypes; 
+  amountType: SalaryCompAmountTypes;
   value: number;
-  isActive: boolean; 
-  description: string; 
+  isActive: boolean;
+  description: string;
 }
-
 
 export type SalaryComponentFormData = Omit<SalaryComponent, "_id" | "ID">;
 
 // Form values when editing
-export type SalaryComponentFormWithId = SalaryComponentFormData & { _id: string };
-
+export type SalaryComponentFormWithId = SalaryComponentFormData & {
+  _id: string;
+};
 
 // -----------Salary Structure--------------
 
 export interface SalaryStructureComp {
-  component: string; 
+  name?: string;
+  amountType?: string;
+  component: string;
   type: string;
   value: number;
   ID: string;
 }
 
 export interface SalaryStructure {
+  ID?: string;
   _id?: string;
   name: string;
   base: number;
@@ -794,17 +797,117 @@ export interface SalaryStructure {
     _id: string;
     name: string;
   };
-  isActive: boolean; 
+  isActive: boolean;
   effectiveFrom: string;
   remarks?: string;
   components: SalaryStructureComp[];
 }
 
-
-export type SalaryStructureFormData = Omit<SalaryStructure, "_id" | "employee"> & {
+export type SalaryStructureFormData = Omit<
+  SalaryStructure,
+  "_id" | "employee"
+> & {
   employee?: string | null;
 };
 
-export type SalaryStructureFormWithId = SalaryStructureFormData & { _id: string };
+export type SalaryStructureFormWithId = SalaryStructureFormData & {
+  _id: string;
+};
+
+// -----------Salary Structure--------------
+
+export interface SalarySlip {
+  _id?: string;
+  ID?: string;
+  baseSallary?: number;
+  employee: string;
+  month: string;
+  year: number;
+  salaryStructure: {
+    _id: string;
+    ID: string;
+  };
+  status: string;
+  components: SalaryStructureComp[];
+}
+
+export type SalarySlipFormData = Omit<SalarySlip, "_id">;
+
+export type SalarySlipFormWithId = SalarySlipFormData & { _id: string };
+
+// -----------Asset Category--------------
+
+export interface AssetCategory {
+  _id?: string;
+  ID?: string;
+  name: string;
+  description: string;
+  depreciationMethod: string; // 'Straight Line', 'Declining Balance', 'None'
+  usefulLifeInYears: number;
+  salvageValue: number;
+  isActive: boolean;
+}
+
+export type AssetCategoryFormData = Omit<AssetCategory, "_id">;
+
+export type AssetCategoryFormWithId = AssetCategoryFormData & { _id: string };
+
+// -----------Asset Location--------------
+
+export interface AssetLocation {
+  _id?: string;
+  ID?: string;
+  name: string;
+  address: string;
+  isActive: boolean;
+  department: {
+    _id: string;
+    name: string;
+    ID: string;
+  };
+  inCharge: {
+    _id: string;
+    name: string;
+    ID: string;
+  };
+}
+
+export type AssetLocationFormData = Omit<AssetLocation, "_id">;
+
+export type AssetLocationFormWithId = AssetLocationFormData & { _id: string };
+
+// -----------Asset--------------
+
+export interface Asset {
+  _id?: string;
+  ID?: string;
+  name: string;
+  category: {
+    _id: string;
+    name: string;
+    ID: string;
+  };
+  location: {
+    _id: string;
+    name: string;
+    ID: string;
+  };
+  purchaseDate: string;
+  purchaseCost: number;
+  vendor: {
+    _id: string;
+    name: string;
+    ID: string;
+  };
+  currentValue: number;
+  status: string; // 'In Use', 'Idle', 'Scrapped', 'Sold', 'Under Maintenance'
+  warrantyExpiry: string;
+  notes: string;
+  isActive: boolean;
+}
+
+export type AssetFormData = Omit<Asset, "_id">;
+
+export type AssetFormWithId = AssetFormData & { _id: string };
 
 

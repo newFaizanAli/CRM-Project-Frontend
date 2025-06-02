@@ -28,6 +28,8 @@ const SalaryStructureForm = ({
       component: comp.component._id,
       type: comp.type,
       value: comp.value,
+      name: comp.name,
+      amountType: comp.amountType,
     })) || [];
 
   const [components, setComponents] =
@@ -66,6 +68,8 @@ const SalaryStructureForm = ({
     if (!component) return;
 
     const newComp: SalaryStructureComp = {
+      name: component.name,
+      amountType: component.amountType,
       component: component._id,
       value: component.value,
       type: component.type,
@@ -168,11 +172,13 @@ const SalaryStructureForm = ({
       </div>
 
       <div className="overflow-auto">
-        <table className="w-full table-auto border mt-4">
+        <table className="w-full table-auto border mt-4 text-center">
           <thead>
             <tr className="bg-gray-100">
               <th>Code</th>
+              <th>Name</th>
               <th>Type</th>
+              <th>Amount-Type</th>
               <th>Value</th>
               <th>Action</th>
             </tr>
@@ -185,7 +191,9 @@ const SalaryStructureForm = ({
               return (
                 <tr key={index} className="border-t">
                   <td>{component?.ID || ""}</td>
+                  <td>{component?.name || ""}</td>
                   <td>{component?.type || ""}</td>
+                  <td>{component?.amountType || ""}</td>
                   <td>{component?.value || ""}</td>
                   <td>
                     <button
@@ -234,7 +242,7 @@ const SalaryStructureForm = ({
           Cancel
         </button>
         <button type="submit" className="btn btn-primary">
-          {salary_structure ? "Update" : "Create"} Salary Strcutre
+          {salary_structure ? "Update" : "Create"} Salary Structure
         </button>
       </div>
     </form>

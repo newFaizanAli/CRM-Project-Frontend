@@ -18,6 +18,7 @@ import HRLayout from "./components/Layout/HRLayout";
 import ProjectLayout from "./components/Layout/ProjectLayout";
 import CRMLayout from "./components/Layout/CRMLayout";
 import PayrollLayout from "./components/Layout/PayrollLayout";
+import AssetLayout from "./components/Layout/AssetLayout";
 
 import PurchaseDashboard from "./pages/PurchaseDashboard";
 import StockDashboard from "./pages/StockDashboard";
@@ -26,6 +27,7 @@ import HRDashboard from "./pages/HRDashboard";
 import ProjectDashboard from "./pages/ProjectDashboard";
 import CRMDashboard from "./pages/CRMDashboard";
 import PayrollDashboard from "./pages/dashboard/PayrollDashboard";
+import AssetDashboard from "./pages/dashboard/AssetDashboard";
 
 import Login from "./pages/Login";
 import Signup from "./pages/Signup";
@@ -74,10 +76,18 @@ import LeavePage from "./pages/hr/attendance/Leave";
 import Tasks from "./pages/Tasks";
 import ProjectPage from "./pages/Project";
 import CompanyPage from "./pages/Companies";
+
+// Salary
 import SalaryComponentPage from "./pages/payroll/SalaryComponent";
 import SalaryStructurePage from "./pages/payroll/SalaryStructure";
 import SalaryAssignmentPage from "./pages/payroll/SalaryAssignment";
 import SalarySlipPage from "./pages/payroll/SalarySlip";
+
+// Assest
+import AssetPage from "./pages/assets/AssetPage";
+import AssetCategoryPage from "./pages/assets/AssetCategory";
+import AssetLocationPage from "./pages/assets/AssetLocation";
+import AssetMovement from "./pages/assets/AssetMovement";
 
 const queryClient = new QueryClient();
 
@@ -151,11 +161,28 @@ function App() {
                 <Route path="tasks" element={<Tasks />} />
               </Route>
 
+              <Route path="/asset" element={<AssetLayout />}>
+                <Route index element={<AssetDashboard />} />
+                <Route path="assets" element={<AssetPage />} />
+                <Route path="category" element={<AssetCategoryPage />} />
+                <Route path="location" element={<AssetLocationPage />} />
+                <Route path="movement" element={<AssetMovement />} />
+              </Route>
+
               <Route path="/payroll" element={<PayrollLayout />}>
                 <Route index element={<PayrollDashboard />} />
-                <Route path="salary-comonent" element={<SalaryComponentPage />} />
-                <Route path="salary-structure" element={<SalaryStructurePage />} />
-                <Route path="salary-assignment" element={<SalaryAssignmentPage />} />
+                <Route
+                  path="salary-comonent"
+                  element={<SalaryComponentPage />}
+                />
+                <Route
+                  path="salary-structure"
+                  element={<SalaryStructurePage />}
+                />
+                <Route
+                  path="salary-assignment"
+                  element={<SalaryAssignmentPage />}
+                />
                 <Route path="salary-slip" element={<SalarySlipPage />} />
               </Route>
 
