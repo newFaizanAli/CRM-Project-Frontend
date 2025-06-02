@@ -25,8 +25,12 @@ import useProjectsStore from "../store/projects";
 import useCompaniesStore from "../store/companies";
 import useSalaryComponentStore from "../store/payroll/salary-compoents";
 import useSalaryStructureStore from "../store/payroll/salary-structure";
+import useSalarySlipStore from "../store/payroll/salary-slip";
+
 import useAttendanceStore from "../store/hr/attendances";
 import useLeaveStore from "../store/hr/leaves";
+import useAssetCategoryStore from "../store/asset/asset-category";
+import useAssetLocationStore from "../store/asset/asset-locations";
 
 const useInitialData = () => {
   // crm
@@ -74,6 +78,12 @@ const useInitialData = () => {
   // payroll
   const { fetchSalaryComponents } = useSalaryComponentStore();
   const { fetchSalaryStructures } = useSalaryStructureStore();
+  const { fetchSalarySlips } = useSalarySlipStore();
+
+  // assets
+
+  const { fetchAssetCategories } = useAssetCategoryStore();
+  const { fetchAssetLocations } = useAssetLocationStore();
 
   const [loading, setLoading] = useState(true);
 
@@ -114,6 +124,10 @@ const useInitialData = () => {
 
         fetchSalaryComponents(),
         fetchSalaryStructures(),
+        fetchSalarySlips(),
+
+        fetchAssetCategories(),
+        fetchAssetLocations(),
       ]);
       setLoading(false);
     };
