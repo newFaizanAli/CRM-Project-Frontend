@@ -6,13 +6,13 @@ import {
   createColumnHelper,
   ColumnDef,
 } from "@tanstack/react-table";
-import { Asset } from "../../utilities/types";
-import useAssetStore from "../../store/asset/asset";
-import AssetForm from "../../components/form/assets/AssetForm";
+import { MaintainanceTeam } from "../../../utilities/types";
+import useMaintenanceTeamStore from "../../../store/asset/maintainance/maintainance-team";
+import MaintainanceTeamForm from "../../../components/form/assets/maintainance/MaintainanceTeamForm";
 
-const columnHelper = createColumnHelper<Asset>();
+const columnHelper = createColumnHelper<MaintainanceTeam>();
 
-const columns: ColumnDef<Asset, any>[] = [
+const columns: ColumnDef<MaintainanceTeam, any>[] = [
   columnHelper.accessor("ID", {
     header: "Code",
     cell: (info) => info.getValue(),
@@ -21,88 +21,75 @@ const columns: ColumnDef<Asset, any>[] = [
     header: "Name",
     cell: (info) => info.getValue(),
   }),
-  columnHelper.accessor((row) => row.vendor, {
-    id: "Vendor",
-    header: "Vendor",
+  columnHelper.accessor((row) => row.manager, {
+    id: "Manager",
+    header: "Manager",
     cell: (info) => info.getValue()?.name ?? "-",
-  }),
-  columnHelper.accessor((row) => row.category, {
-    id: "Category",
-    header: "Category",
-    cell: (info) => info.getValue()?.name ?? "-",
-  }),
-  columnHelper.accessor("isActive", {
-    header: "Is-Active",
-    cell: (info) => (info.getValue() ? "Active" : "Inactive"),
-  }),
-  columnHelper.accessor("status", {
-    header: "Status",
-    cell: (info) => info.getValue() ?? "-",
   }),
 ];
 
-const AssetPage = () => {
-  const { assets, deleteAsset, fetchAssets, isFetched } = useAssetStore();
+const MaintenanceTeamPage = () => {
+  const { teams, deleteTeam, fetchTeams, isFetched } =
+    useMaintenanceTeamStore();
 
   const [isModalOpen, setIsModalOpen] = useState(false);
-  const [selectedAsset, setSelectedAsset] = useState<Asset | undefined>();
+  const [selectedTeam, setselectedTeam] = useState<
+    MaintainanceTeam | undefined
+  >();
 
   useEffect(() => {
     if (!isFetched) {
-      fetchAssets();
+      fetchTeams();
     }
-  }, [isFetched, fetchAssets]);
+  }, [fetchTeams, isFetched]);
 
   const table = useReactTable({
-    data: assets,
+    data: teams,
     columns,
     getCoreRowModel: getCoreRowModel(),
   });
 
   const handleDelete = (id: string) => {
-    if (confirm("Are you sure you want to delete this asset?")) {
-      deleteAsset(id);
+    if (window.confirm("Are you sure you want to delete this team?")) {
+      deleteTeam(String(id));
     }
   };
 
-  const handleEdit = (asset: Asset) => {
-    setSelectedAsset(asset);
+  const handleEdit = (struc: MaintainanceTeam) => {
+    setselectedTeam(struc);
     setIsModalOpen(true);
   };
 
   const handleAdd = () => {
-    setSelectedAsset(undefined);
+    setselectedTeam(undefined);
     setIsModalOpen(true);
   };
 
   const handleClose = () => {
-    setSelectedAsset(undefined);
     setIsModalOpen(false);
+    setselectedTeam(undefined);
   };
 
   return (
     <div className="p-6">
-      {/* Header */}
       <div className="flex justify-between items-center mb-6">
-        <h1 className="text-2xl font-bold text-gray-900">Assets</h1>
+        <h1 className="text-2xl font-bold text-gray-900">Maintainance Teams</h1>
         <button onClick={handleAdd} className="btn btn-primary">
-          Add Asset
+          Add Team
         </button>
       </div>
 
-      {/* Modal */}
       {isModalOpen && (
-        <div className="fixed inset-0 bg-black bg-opacity-40 flex items-center justify-center z-50 p-4">
-          <div className="bg-white rounded-lg p-6 w-full max-w-xl">
+        <div className="fixed inset-0 bg-gray-500 bg-opacity-75 flex items-center justify-center p-4 z-50">
+          <div className="bg-white rounded-lg max-h-screen overflow-y-auto w-full max-w-3xl p-6">
             <h2 className="text-xl font-semibold mb-4">
-              {selectedAsset ? "Edit Asset" : "Add Asset"}
+              {selectedTeam ? "Edit Team" : "Add Team"}
             </h2>
-            <AssetForm assets={selectedAsset} onClose={handleClose} />
+            <MaintainanceTeamForm team={selectedTeam} onClose={handleClose} />
           </div>
         </div>
       )}
 
-      {/* Table */}
       <div className="bg-white shadow rounded-lg overflow-hidden">
         <table className="min-w-full divide-y divide-gray-200">
           <thead className="bg-gray-50">
@@ -156,4 +143,4 @@ const AssetPage = () => {
   );
 };
 
-export default AssetPage;
+export default MaintenanceTeamPage;

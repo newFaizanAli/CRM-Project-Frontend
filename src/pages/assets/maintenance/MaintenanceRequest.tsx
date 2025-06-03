@@ -6,103 +6,127 @@ import {
   createColumnHelper,
   ColumnDef,
 } from "@tanstack/react-table";
-import { Asset } from "../../utilities/types";
-import useAssetStore from "../../store/asset/asset";
-import AssetForm from "../../components/form/assets/AssetForm";
+import { MaintenanceRequest } from "../../../utilities/types";
+import useMaintenanceRequestStore from "../../../store/asset/maintainance/maintainance-request";
+import MaintenanceRequestForm from "../../../components/form/assets/maintainance/MaintainanceRequest";
 
-const columnHelper = createColumnHelper<Asset>();
+const columnHelper = createColumnHelper<MaintenanceRequest>();
 
-const columns: ColumnDef<Asset, any>[] = [
+const columns: ColumnDef<MaintenanceRequest, any>[] = [
   columnHelper.accessor("ID", {
     header: "Code",
     cell: (info) => info.getValue(),
   }),
-  columnHelper.accessor("name", {
-    header: "Name",
-    cell: (info) => info.getValue(),
+
+  columnHelper.accessor((row) => row.asset, {
+    id: "Asset",
+    header: "Asset",
+    cell: (info) => info.getValue()?.ID ?? "-",
   }),
-  columnHelper.accessor((row) => row.vendor, {
-    id: "Vendor",
-    header: "Vendor",
+
+  columnHelper.accessor((row) => row.reportedBy, {
+    id: "reportedBy",
+    header: "Reported-by",
     cell: (info) => info.getValue()?.name ?? "-",
   }),
-  columnHelper.accessor((row) => row.category, {
-    id: "Category",
-    header: "Category",
+
+  columnHelper.accessor((row) => row.assignedTo, {
+    id: "Assigned-To",
+    header: "Assigned-to",
     cell: (info) => info.getValue()?.name ?? "-",
   }),
-  columnHelper.accessor("isActive", {
-    header: "Is-Active",
-    cell: (info) => (info.getValue() ? "Active" : "Inactive"),
+
+  columnHelper.accessor("priority", {
+    header: "Priority",
+    cell: (info) => {
+      const priority = info.getValue();
+      const color = {
+        Low: "bg-gray-100 text-gray-800",
+        Medium: "bg-orange-100 text-orange-800",
+        High: "bg-red-100 text-red-800",
+      }[priority];
+      return (
+        <span className={`px-2 py-1 rounded-full text-xs font-medium ${color}`}>
+          {priority}
+        </span>
+      );
+    },
   }),
-  columnHelper.accessor("status", {
+
+  columnHelper.accessor((row) => row.status, {
+    id: "Status",
     header: "Status",
     cell: (info) => info.getValue() ?? "-",
   }),
 ];
 
-const AssetPage = () => {
-  const { assets, deleteAsset, fetchAssets, isFetched } = useAssetStore();
+const MaintenanceRequestPage = () => {
+  const { requests, deleteRequest, fetchRequests, isFetched } =
+    useMaintenanceRequestStore();
 
   const [isModalOpen, setIsModalOpen] = useState(false);
-  const [selectedAsset, setSelectedAsset] = useState<Asset | undefined>();
+  const [selectedRequest, setselectedRequest] = useState<
+    MaintenanceRequest | undefined
+  >();
 
   useEffect(() => {
     if (!isFetched) {
-      fetchAssets();
+      fetchRequests();
     }
-  }, [isFetched, fetchAssets]);
+  }, [fetchRequests, isFetched]);
 
   const table = useReactTable({
-    data: assets,
+    data: requests,
     columns,
     getCoreRowModel: getCoreRowModel(),
   });
 
   const handleDelete = (id: string) => {
-    if (confirm("Are you sure you want to delete this asset?")) {
-      deleteAsset(id);
+    if (window.confirm("Are you sure you want to delete this request?")) {
+      deleteRequest(String(id));
     }
   };
 
-  const handleEdit = (asset: Asset) => {
-    setSelectedAsset(asset);
+  const handleEdit = (req: MaintenanceRequest) => {
+    setselectedRequest(req);
     setIsModalOpen(true);
   };
 
   const handleAdd = () => {
-    setSelectedAsset(undefined);
+    setselectedRequest(undefined);
     setIsModalOpen(true);
   };
 
   const handleClose = () => {
-    setSelectedAsset(undefined);
     setIsModalOpen(false);
+    setselectedRequest(undefined);
   };
 
   return (
     <div className="p-6">
-      {/* Header */}
       <div className="flex justify-between items-center mb-6">
-        <h1 className="text-2xl font-bold text-gray-900">Assets</h1>
+        <h1 className="text-2xl font-bold text-gray-900">
+          Maintainance Requests
+        </h1>
         <button onClick={handleAdd} className="btn btn-primary">
-          Add Asset
+          Add Request
         </button>
       </div>
 
-      {/* Modal */}
       {isModalOpen && (
-        <div className="fixed inset-0 bg-black bg-opacity-40 flex items-center justify-center z-50 p-4">
-          <div className="bg-white rounded-lg p-6 w-full max-w-xl">
+        <div className="fixed inset-0 bg-gray-500 bg-opacity-75 flex items-center justify-center p-4 z-50">
+          <div className="bg-white rounded-lg max-h-screen overflow-y-auto w-full max-w-3xl p-6">
             <h2 className="text-xl font-semibold mb-4">
-              {selectedAsset ? "Edit Asset" : "Add Asset"}
+              {selectedRequest ? "Edit Request" : "Add Request"}
             </h2>
-            <AssetForm assets={selectedAsset} onClose={handleClose} />
+            <MaintenanceRequestForm
+              request={selectedRequest}
+              onClose={handleClose}
+            />
           </div>
         </div>
       )}
 
-      {/* Table */}
       <div className="bg-white shadow rounded-lg overflow-hidden">
         <table className="min-w-full divide-y divide-gray-200">
           <thead className="bg-gray-50">
@@ -156,4 +180,4 @@ const AssetPage = () => {
   );
 };
 
-export default AssetPage;
+export default MaintenanceRequestPage;

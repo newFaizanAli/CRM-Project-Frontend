@@ -88,6 +88,10 @@ import AssetPage from "./pages/assets/AssetPage";
 import AssetCategoryPage from "./pages/assets/AssetCategory";
 import AssetLocationPage from "./pages/assets/AssetLocation";
 import AssetMovement from "./pages/assets/AssetMovement";
+import MaintenanceLog from "./pages/assets/maintenance/MaintenanceLog";
+import MaintenanceRequestPage from "./pages/assets/maintenance/MaintenanceRequest";
+import MaintenanceSchedule from "./pages/assets/maintenance/MaintenanceSchedule";
+import MaintenanceTeamPage from "./pages/assets/maintenance/MaintenanceTeam";
 
 const queryClient = new QueryClient();
 
@@ -167,6 +171,20 @@ function App() {
                 <Route path="category" element={<AssetCategoryPage />} />
                 <Route path="location" element={<AssetLocationPage />} />
                 <Route path="movement" element={<AssetMovement />} />
+                {/* maintenance */}
+                <Route path="maintenance/log" element={<MaintenanceLog />} />
+                <Route
+                  path="maintenance/request"
+                  element={<MaintenanceRequestPage />}
+                />
+                <Route
+                  path="maintenance/schedule"
+                  element={<MaintenanceSchedule />}
+                />
+                  <Route
+                  path="maintenance/team"
+                  element={<MaintenanceTeamPage />}
+                />
               </Route>
 
               <Route path="/payroll" element={<PayrollLayout />}>

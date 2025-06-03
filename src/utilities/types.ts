@@ -910,4 +910,65 @@ export type AssetFormData = Omit<Asset, "_id">;
 
 export type AssetFormWithId = AssetFormData & { _id: string };
 
+// -----------Maintainance Team--------------
+
+export interface MaintainanceTeamMember {
+  name?: string;
+  ID: string;
+  member: string;
+}
+
+export interface MaintainanceTeam {
+  ID?: string;
+  _id?: string;
+  name: string;
+  manager: {
+    _id: string;
+    name: string;
+  };
+  members: MaintainanceTeamMember[];
+}
+
+export type MaintainanceTeamFormData = Omit<
+  MaintainanceTeam,
+  "_id" | "manager"
+> & {
+  manager?: string | null;
+};
+
+export type MaintainanceTeamFormWithId = MaintainanceTeamFormData & {
+  _id: string;
+};
+
+// -----------Maintainance Request--------------
+
+export interface MaintenanceRequest {
+  _id?: string;
+  ID?: string;
+  asset: {
+    _id: string;
+    ID: string;
+  };
+  requestDate: string;
+  reportedBy: {
+    _id: string;
+    name: string;
+    ID: string;
+  };
+  assignedTo: {
+    _id: string;
+    name: string;
+    ID: string;
+  };
+  problemDescription: string;
+  resolutionNote: string;
+  closedDate: string;
+  priority: string; // 'Low', 'Medium', 'High'
+  status: string; // 'Open', 'In Progress', 'Resolved', 'Closed'
+  isActive: boolean;
+}
+
+export type MaintenanceRequestFormData = Omit<MaintenanceRequest, "_id">;
+
+export type MaintenanceRequestFormWithId = MaintenanceRequestFormData & { _id: string };
 

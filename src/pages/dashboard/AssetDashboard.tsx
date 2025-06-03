@@ -2,7 +2,10 @@ import {
   BanknotesIcon,
   RectangleGroupIcon,
   MapPinIcon,
-  DocumentDuplicateIcon
+  WrenchScrewdriverIcon,
+  CalendarDaysIcon,
+  ClipboardDocumentListIcon,
+  UsersIcon,
 } from "@heroicons/react/24/outline";
 import DashboardWidgets from "../../components/custom/DashboardWidgets";
 
@@ -22,15 +25,36 @@ const assetModules = [
     icon: <MapPinIcon className="h-8 w-8" />,
     path: "/asset/location",
   },
+];
+
+const maintenanceModules = [
   {
-    name: "Salary Slip",
-    icon: <DocumentDuplicateIcon className="h-8 w-8" />,
-    path: "/asset/movement",
+    name: "Maintenance Request",
+    icon: <WrenchScrewdriverIcon className="h-8 w-8" />,
+    path: "/asset/maintenance/request",
+  },
+  {
+    name: "Maintenance Schedule",
+    icon: <CalendarDaysIcon className="h-8 w-8" />,
+    path: "/asset/maintenance/schedule",
+  },
+  {
+    name: "Maintenance Log",
+    icon: <ClipboardDocumentListIcon className="h-8 w-8" />,
+    path: "/asset/maintenance/log",
+  },
+   {
+    name: "Maintenance Team",
+    icon: <UsersIcon className="h-8 w-8" />,
+    path: "/asset/maintenance/team",
   },
 ];
 
 export default function AssetDashboard() {
   return (
-    <DashboardWidgets data={assetModules} title={'Assets'} />
+    <>
+      <DashboardWidgets data={assetModules} title={"Assets"} />
+      <DashboardWidgets data={maintenanceModules} title={"Maintenance"} />
+    </>
   );
 }

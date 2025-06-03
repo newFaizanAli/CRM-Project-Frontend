@@ -173,3 +173,24 @@ export const asstesDepreciationMethods = [
   { label: "Declining Balance", value: "Declining Balance" },
   { label: "None", value: "None" },
 ];
+
+export const asstesStatus = [
+  { label: "In Use", value: "In Use" },
+  { label: "Idle", value: "Idle" },
+  { label: "Scrapped", value: "Scrapped" },
+  { label: "Under Maintenance", value: "Under Maintenance" },
+  { label: "Other", value: "Other" },
+];
+
+export const MaintainanceRequestPriority = [
+  { label: "Low", value: "Low" },
+  { label: "Medium", value: "Medium" },
+  { label: "High", value: "High" },
+];
+
+export const MaintainanceRequestStatus = [
+  { label: "Open", value: "Open" },
+  { label: "In Progress", value: "In Progress" },
+  { label: "Resolved", value: "Resolved" },
+  { label: "Closed", value: "Closed" },
+];
