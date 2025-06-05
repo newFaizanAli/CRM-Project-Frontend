@@ -31,6 +31,10 @@ import useAttendanceStore from "../store/hr/attendances";
 import useLeaveStore from "../store/hr/leaves";
 import useAssetCategoryStore from "../store/asset/asset-category";
 import useAssetLocationStore from "../store/asset/asset-locations";
+import useAssetStore from "../store/asset/asset";
+import useMaintenanceRequestStore from "../store/asset/maintainance/maintainance-request";
+import useMaintenanceLogStore from "../store/asset/maintainance/maintainance-log";
+import useMaintenanceTeamStore from "../store/asset/maintainance/maintainance-team";
 
 const useInitialData = () => {
   // crm
@@ -84,6 +88,12 @@ const useInitialData = () => {
 
   const { fetchAssetCategories } = useAssetCategoryStore();
   const { fetchAssetLocations } = useAssetLocationStore();
+  const { fetchAssets } = useAssetStore();
+
+  // maintanance
+  const { fetchRequests } = useMaintenanceRequestStore();
+  const { fetchTeams } = useMaintenanceTeamStore();
+  const { fetchLogs } = useMaintenanceLogStore();
 
   const [loading, setLoading] = useState(true);
 
@@ -128,6 +138,11 @@ const useInitialData = () => {
 
         fetchAssetCategories(),
         fetchAssetLocations(),
+        fetchAssets(),
+
+        fetchRequests(),
+        fetchTeams(),
+        fetchLogs()
       ]);
       setLoading(false);
     };

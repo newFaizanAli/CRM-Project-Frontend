@@ -4,7 +4,7 @@ import { ProjectURL } from "../utilities/const";
 
 interface Activity {
   _id: string;
-  type: string;
+  type: string; 
   title: string;
   detail: string;
   link: string;

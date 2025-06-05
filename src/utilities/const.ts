@@ -13,10 +13,10 @@ export const unitTypes = [
   { label: "Liters", value: "l" },
   { label: "Milliliters", value: "ml" },
   { label: "Box", value: "box" },
-  { label: "Packet", value: "pkt" },
+  { label: "Packet", value: "pkt" }, 
   { label: "Dozen", value: "dozen" },
   { label: "Meter", value: "m" },
-  { label: "Centimeter", value: "cm" },
+  { label: "Centimeter", value: "cm" }, 
   { label: "Inch", value: "inch" },
   { label: "Foot", value: "ft" },
   { label: "Roll", value: "roll" },
@@ -193,4 +193,10 @@ export const MaintainanceRequestStatus = [
   { label: "In Progress", value: "In Progress" },
   { label: "Resolved", value: "Resolved" },
   { label: "Closed", value: "Closed" },
+];
+
+
+export const MaintainanceLogTypes = [ 
+  { label: "Corrective", value: "Corrective" },
+  { label: "Preventive", value: "Preventive" },
 ];

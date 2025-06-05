@@ -970,5 +970,54 @@ export interface MaintenanceRequest {
 
 export type MaintenanceRequestFormData = Omit<MaintenanceRequest, "_id">;
 
-export type MaintenanceRequestFormWithId = MaintenanceRequestFormData & { _id: string };
+export type MaintenanceRequestFormWithId = MaintenanceRequestFormData & {
+  _id: string;
+};
+
+// -----------Maintainance Log--------------
+
+export interface MaintenanceLog {
+  _id?: string;
+  ID?: string;
+  asset: {
+    _id: string;
+    ID: string;
+  };
+  maintenanceDate: string;
+  performedBy: {
+    _id: string;
+    name: string;
+    ID: string;
+  };
+  type: string; // 'Corrective', 'Preventive'
+  description: string;
+  notes: string;
+  cost: number;
+}
+
+export type MaintenanceLogFormData = Omit<MaintenanceLog, "_id">;
+
+export type MaintenanceLogFormWithId = MaintenanceLogFormData & {
+  _id: string;
+};
+
+
+
+// -----------Workstation TType--------------
+
+export interface WorkstationType {
+  _id?: string;
+  ID?: string;
+  name: string; // e.g. "Cutting", "Welding", "Assembly"
+  defaultCostPerHour: number;
+  description: string;
+  isActive: boolean;
+}
+
+export type WorkstationTypeFormData = Omit<WorkstationType, "_id">;
+
+export type WorkstationTypeFormWithId =WorkstationTypeFormData & {
+  _id: string;
+};
+
 

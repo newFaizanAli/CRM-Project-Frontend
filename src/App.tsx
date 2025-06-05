@@ -88,10 +88,17 @@ import AssetPage from "./pages/assets/AssetPage";
 import AssetCategoryPage from "./pages/assets/AssetCategory";
 import AssetLocationPage from "./pages/assets/AssetLocation";
 import AssetMovement from "./pages/assets/AssetMovement";
-import MaintenanceLog from "./pages/assets/maintenance/MaintenanceLog";
+import MaintenanceLogPage from "./pages/assets/maintenance/MaintenanceLog";
 import MaintenanceRequestPage from "./pages/assets/maintenance/MaintenanceRequest";
 import MaintenanceSchedule from "./pages/assets/maintenance/MaintenanceSchedule";
 import MaintenanceTeamPage from "./pages/assets/maintenance/MaintenanceTeam";
+import ManufacturingLayout from "./components/Layout/ManufacturingLayout";
+import Operations from "./pages/manufacturing/Operations";
+import ManufacturingDashboard from "./pages/dashboard/ManufacturingDashboard";
+import WorkstationTypes from "./pages/manufacturing/WorkstationTypes";
+import Workstations from "./pages/manufacturing/Workstations";
+import BillOfMaterials from "./pages/manufacturing/BOM";
+import ManufacturingItems from "./pages/manufacturing/ManufacturingItems";
 
 const queryClient = new QueryClient();
 
@@ -172,7 +179,10 @@ function App() {
                 <Route path="location" element={<AssetLocationPage />} />
                 <Route path="movement" element={<AssetMovement />} />
                 {/* maintenance */}
-                <Route path="maintenance/log" element={<MaintenanceLog />} />
+                <Route
+                  path="maintenance/log"
+                  element={<MaintenanceLogPage />}
+                />
                 <Route
                   path="maintenance/request"
                   element={<MaintenanceRequestPage />}
@@ -181,7 +191,7 @@ function App() {
                   path="maintenance/schedule"
                   element={<MaintenanceSchedule />}
                 />
-                  <Route
+                <Route
                   path="maintenance/team"
                   element={<MaintenanceTeamPage />}
                 />
@@ -202,6 +212,18 @@ function App() {
                   element={<SalaryAssignmentPage />}
                 />
                 <Route path="salary-slip" element={<SalarySlipPage />} />
+              </Route>
+ 
+              <Route path="/manufacturing" element={<ManufacturingLayout />}>
+                <Route index element={<ManufacturingDashboard />} />
+                <Route path="operations" element={<Operations />} />
+                <Route
+                  path="workstations-types"
+                  element={<WorkstationTypes />}
+                />
+                <Route path="workstations" element={<Workstations />} />
+                <Route path="bom" element={<BillOfMaterials />} />
+                <Route path="items" element={<ManufacturingItems />} />
               </Route>
 
               <Route path="/calendar" element={<Calendar />} />
