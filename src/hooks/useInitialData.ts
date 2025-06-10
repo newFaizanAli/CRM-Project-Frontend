@@ -35,6 +35,8 @@ import useAssetStore from "../store/asset/asset";
 import useMaintenanceRequestStore from "../store/asset/maintainance/maintainance-request";
 import useMaintenanceLogStore from "../store/asset/maintainance/maintainance-log";
 import useMaintenanceTeamStore from "../store/asset/maintainance/maintainance-team";
+import useWorkstationTypeStore from "../store/manufacturing/workstation-type";
+import useWorkstationStore from "../store/manufacturing/workstations";
 
 const useInitialData = () => {
   // crm
@@ -95,6 +97,15 @@ const useInitialData = () => {
   const { fetchTeams } = useMaintenanceTeamStore();
   const { fetchLogs } = useMaintenanceLogStore();
 
+
+  // manufacturing
+
+  const { fetchWorkstationTypes } = useWorkstationTypeStore();
+  const { fetchWorkstations } = useWorkstationStore();
+
+
+
+
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
@@ -142,7 +153,11 @@ const useInitialData = () => {
 
         fetchRequests(),
         fetchTeams(),
-        fetchLogs()
+        fetchLogs(),
+
+
+        fetchWorkstationTypes(),
+        fetchWorkstations()
       ]);
       setLoading(false);
     };

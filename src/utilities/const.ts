@@ -14,7 +14,7 @@ export const unitTypes = [
   { label: "Milliliters", value: "ml" },
   { label: "Box", value: "box" },
   { label: "Packet", value: "pkt" }, 
-  { label: "Dozen", value: "dozen" },
+  { label: "Dozen", value: "dozen" }, 
   { label: "Meter", value: "m" },
   { label: "Centimeter", value: "cm" }, 
   { label: "Inch", value: "inch" },
@@ -200,3 +200,6 @@ export const MaintainanceLogTypes = [
   { label: "Corrective", value: "Corrective" },
   { label: "Preventive", value: "Preventive" },
 ];
+
+
+

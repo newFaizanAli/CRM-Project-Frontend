@@ -1,31 +1,26 @@
 import axios from "axios";
 import { create } from "zustand";
 import { ProjectURL } from "../../utilities/const";
-import { WorkstationType } from "../../utilities/types";
+import { Workstation } from "../../utilities/types";
 import { toastError } from "../../utilities/toastUtils";
 
-interface WorkstationTypeState {
-  workstationTypes: WorkstationType[];
+interface WorkstationState {
+  workstations: Workstation[];
   isFetched: boolean;
-  fetchWorkstationTypes: () => Promise<void>;
-  addWorkstationType: (
-    workstationType: Omit<WorkstationType, "_id">
-  ) => Promise<void>;
-  updateWorkstationType: (
-    id: string,
-    workstationType: Partial<WorkstationType>
-  ) => Promise<void>;
-  deleteWorkstationType: (id: string) => Promise<void>;
+  fetchWorkstations: () => Promise<void>;
+  addWorkstation: (workstation: Omit<Workstation, "_id">) => Promise<void>;
+  updateWorkstation: (id: string, data: Partial<Workstation>) => Promise<void>;
+  deleteWorkstation: (id: string) => Promise<void>;
 }
 
-const DUMMY_STORAGE_KEY = "dummy_workstation_types";
-const BackendURL = `workstation-types`;
+const DUMMY_STORAGE_KEY = "dummy_workstations";
+const BackendURL = `workstations`;
 
-const useWorkstationTypeStore = create<WorkstationTypeState>((set, get) => ({
-  workstationTypes: [],
+const useWorkstationStore = create<WorkstationState>((set, get) => ({
+  workstations: [],
   isFetched: false,
 
-  fetchWorkstationTypes: async () => {
+  fetchWorkstations: async () => {
     const { isFetched } = get();
     if (isFetched) return;
 
@@ -33,12 +28,12 @@ const useWorkstationTypeStore = create<WorkstationTypeState>((set, get) => ({
 
     if (isDummy) {
       const stored = localStorage.getItem(DUMMY_STORAGE_KEY);
-      const dummyData: WorkstationType[] = stored ? JSON.parse(stored) : [];
-      set({ workstationTypes: dummyData, isFetched: true });
+      const dummyData: Workstation[] = stored ? JSON.parse(stored) : [];
+      set({ workstations: dummyData, isFetched: true });
     } else {
       const token = localStorage.getItem("token");
       try {
-        const response = await axios.get<WorkstationType[]>(
+        const response = await axios.get<Workstation[]>(
           `${ProjectURL}/api/${BackendURL}`,
           {
             headers: {
@@ -47,7 +42,7 @@ const useWorkstationTypeStore = create<WorkstationTypeState>((set, get) => ({
             },
           }
         );
-        set({ workstationTypes: response.data, isFetched: true });
+        set({ workstations: response.data, isFetched: true });
       } catch (error) {
         const msg = error?.response?.data?.message;
         toastError(msg);
@@ -55,24 +50,21 @@ const useWorkstationTypeStore = create<WorkstationTypeState>((set, get) => ({
     }
   },
 
-  addWorkstationType: async (workstationType) => {
+  addWorkstation: async (workstation) => {
     const isDummy = localStorage.getItem("accounttype") === "dummy";
 
     if (isDummy) {
       const state = get();
-      const newType: WorkstationType = {
-        _id: Date.now().toString(),
-        ...workstationType,
-      };
-      const updated = [...state.workstationTypes, newType];
+      const newItem: Workstation = { _id: Date.now().toString(), ...workstation };
+      const updated = [...state.workstations, newItem];
       localStorage.setItem(DUMMY_STORAGE_KEY, JSON.stringify(updated));
-      set({ workstationTypes: updated });
+      set({ workstations: updated });
     } else {
       const token = localStorage.getItem("token");
       try {
-        const response = await axios.post<WorkstationType>(
+        const response = await axios.post<Workstation>(
           `${ProjectURL}/api/${BackendURL}`,
-          workstationType,
+          workstation,
           {
             headers: {
               Authorization: `Bearer ${token}`,
@@ -80,11 +72,10 @@ const useWorkstationTypeStore = create<WorkstationTypeState>((set, get) => ({
             },
           }
         );
-
         set((state) => ({
-          workstationTypes: [...state.workstationTypes, response.data],
+          workstations: [...state.workstations, response.data],
+          
         }));
-        
       } catch (error) {
         const msg = error?.response?.data?.message;
         toastError(msg);
@@ -92,29 +83,29 @@ const useWorkstationTypeStore = create<WorkstationTypeState>((set, get) => ({
     }
   },
 
-  updateWorkstationType: async (id, workstationType) => {
+  updateWorkstation: async (id, data) => {
     const isDummy = localStorage.getItem("accounttype") === "dummy";
 
     if (isDummy) {
       const state = get();
-      const updated = state.workstationTypes.map((t) =>
-        t._id === id ? { ...t, ...workstationType } : t
+      const updated = state.workstations.map((w) =>
+        w._id === id ? { ...w, ...data } : w
       );
       localStorage.setItem(DUMMY_STORAGE_KEY, JSON.stringify(updated));
-      set({ workstationTypes: updated });
+      set({ workstations: updated });
     } else {
       const token = localStorage.getItem("token");
       try {
-        const response = await axios.put<WorkstationType>(
+        const response = await axios.put<Workstation>(
           `${ProjectURL}/api/${BackendURL}/${id}`,
-          workstationType,
+          data,
           {
             headers: { Authorization: `Bearer ${token}` },
           }
         );
         set((state) => ({
-          workstationTypes: state.workstationTypes.map((t) =>
-            t._id === id ? response.data : t
+          workstations: state.workstations.map((w) =>
+            w._id === id ? response.data : w
           ),
         }));
       } catch (error) {
@@ -124,14 +115,14 @@ const useWorkstationTypeStore = create<WorkstationTypeState>((set, get) => ({
     }
   },
 
-  deleteWorkstationType: async (id) => {
+  deleteWorkstation: async (id) => {
     const isDummy = localStorage.getItem("accounttype") === "dummy";
 
     if (isDummy) {
       const state = get();
-      const updated = state.workstationTypes.filter((t) => t._id !== id);
+      const updated = state.workstations.filter((w) => w._id !== id);
       localStorage.setItem(DUMMY_STORAGE_KEY, JSON.stringify(updated));
-      set({ workstationTypes: updated });
+      set({ workstations: updated });
     } else {
       const token = localStorage.getItem("token");
       try {
@@ -139,7 +130,7 @@ const useWorkstationTypeStore = create<WorkstationTypeState>((set, get) => ({
           headers: { Authorization: `Bearer ${token}` },
         });
         set((state) => ({
-          workstationTypes: state.workstationTypes.filter((t) => t._id !== id),
+          workstations: state.workstations.filter((w) => w._id !== id),
         }));
       } catch (error) {
         const msg = error?.response?.data?.message;
@@ -149,4 +140,4 @@ const useWorkstationTypeStore = create<WorkstationTypeState>((set, get) => ({
   },
 }));
 
-export default useWorkstationTypeStore;
+export default useWorkstationStore;

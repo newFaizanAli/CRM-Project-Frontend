@@ -1001,13 +1001,10 @@ export type MaintenanceLogFormWithId = MaintenanceLogFormData & {
   _id: string;
 };
 
-
-
-// -----------Workstation TType--------------
+// -----------Workstation Type--------------
 
 export interface WorkstationType {
   _id?: string;
-  ID?: string;
   name: string; // e.g. "Cutting", "Welding", "Assembly"
   defaultCostPerHour: number;
   description: string;
@@ -1016,8 +1013,58 @@ export interface WorkstationType {
 
 export type WorkstationTypeFormData = Omit<WorkstationType, "_id">;
 
-export type WorkstationTypeFormWithId =WorkstationTypeFormData & {
+export type WorkstationTypeFormWithId = WorkstationTypeFormData & {
   _id: string;
 };
 
+// -----------Workstations--------------
 
+export interface Workstation {
+  _id?: string;
+  ID?: string;
+  name: string;
+  type: {
+    _id: string;
+    name: string;
+  };
+  costPerHour: number;
+  description: string;
+  location: string;
+  capacityPerHour: number;
+  isActive: boolean;
+  remarks: string;
+}
+
+export type WorkstationFormData = Omit<Workstation, "_id" | "type"> & {
+  type: string;
+};
+
+export type WorkstationFormWithId = WorkstationFormData & {
+  _id: string;
+};
+
+// -----------Operations--------------
+
+export interface Operation {
+  _id?: string;
+  ID?: string;
+  name: string;
+  workstation: {
+    _id: string;
+    name: string;
+    ID: string;
+  };
+  defaultTimeInMinutes: number;
+  costPerHour: number;
+  isActive: boolean;
+  description: string;
+}
+
+export type OperationFormData = Omit<Operation, "_id" | "workstation"> & {
+  workstation: string; 
+  type: string;
+};
+
+export type OperationFormWithId = OperationFormData & {
+  _id: string;
+};

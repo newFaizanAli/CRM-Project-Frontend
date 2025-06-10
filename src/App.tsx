@@ -93,10 +93,10 @@ import MaintenanceRequestPage from "./pages/assets/maintenance/MaintenanceReques
 import MaintenanceSchedule from "./pages/assets/maintenance/MaintenanceSchedule";
 import MaintenanceTeamPage from "./pages/assets/maintenance/MaintenanceTeam";
 import ManufacturingLayout from "./components/Layout/ManufacturingLayout";
-import Operations from "./pages/manufacturing/Operations";
+import OperationsPage from "./pages/manufacturing/Operations";
 import ManufacturingDashboard from "./pages/dashboard/ManufacturingDashboard";
 import WorkstationTypes from "./pages/manufacturing/WorkstationTypes";
-import Workstations from "./pages/manufacturing/Workstations";
+import WorkstationsPage from "./pages/manufacturing/Workstations";
 import BillOfMaterials from "./pages/manufacturing/BOM";
 import ManufacturingItems from "./pages/manufacturing/ManufacturingItems";
 
@@ -216,12 +216,12 @@ function App() {
  
               <Route path="/manufacturing" element={<ManufacturingLayout />}>
                 <Route index element={<ManufacturingDashboard />} />
-                <Route path="operations" element={<Operations />} />
+                <Route path="operations" element={<OperationsPage />} />
                 <Route
                   path="workstations-types"
                   element={<WorkstationTypes />}
                 />
-                <Route path="workstations" element={<Workstations />} />
+                <Route path="workstations" element={<WorkstationsPage />} />
                 <Route path="bom" element={<BillOfMaterials />} />
                 <Route path="items" element={<ManufacturingItems />} />
               </Route>
