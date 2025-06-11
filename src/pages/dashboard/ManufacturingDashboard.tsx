@@ -1,5 +1,4 @@
 import {
-  CubeIcon,
   ClipboardDocumentListIcon,
   WrenchScrewdriverIcon,
   BuildingLibraryIcon,
@@ -8,11 +7,6 @@ import {
 import DashboardWidgets from "../../components/custom/DashboardWidgets";
 
 const maintenanceModules = [
-  {
-    name: "Items",
-    icon: <CubeIcon className="h-8 w-8" />,
-    path: "/manufacturing/items",
-  },
   {
     name: "BOM",
     icon: <ClipboardDocumentListIcon className="h-8 w-8" />,

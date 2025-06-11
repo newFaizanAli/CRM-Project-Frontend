@@ -88,8 +88,8 @@ const Signup = () => {
       localStorage.setItem('token', response.token);
       localStorage.setItem('user', JSON.stringify(response.user));
       navigate('/dashboard');
-    } catch (err) {
-      setErrors({ form: 'Failed to create account. An account with this email might already exist.' });
+    } catch (e) {
+      setErrors({ form: `Failed to create account. An account with this email might already exist. ${e.mesaage}`, });
     } finally {
       setIsLoading(false);
     }

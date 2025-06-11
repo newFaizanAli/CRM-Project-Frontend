@@ -7,20 +7,18 @@ import {
   ColumnDef,
 } from "@tanstack/react-table";
 import useProductsStore from "../../store/products";
-import ProductForm from "../../components/ProductForm"; 
+import ProductForm from "../../components/ProductForm";
 import { Product } from "../../utilities/types";
-
-
 
 const columnHelper = createColumnHelper<Product>();
 
 const columns: ColumnDef<Product, any>[] = [
-  columnHelper.accessor("name", {
-    header: "Product Name",
+  columnHelper.accessor("itemCode", {
+    header: "Product Code",
     cell: (info) => info.getValue(),
   }),
-  columnHelper.accessor("description", {
-    header: "Description",
+  columnHelper.accessor("name", {
+    header: "Product Name",
     cell: (info) => info.getValue(),
   }),
   columnHelper.accessor("category", {
@@ -39,12 +37,8 @@ const columns: ColumnDef<Product, any>[] = [
 ];
 
 const Products = () => {
-  const {
-    products,
-    deleteProduct,
-    fetchProducts,
-    isFetched,
-  } = useProductsStore();
+  const { products, deleteProduct, fetchProducts, isFetched } =
+    useProductsStore();
 
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [selectedProduct, setSelectedProduct] = useState<Product | undefined>();
@@ -61,13 +55,11 @@ const Products = () => {
     getCoreRowModel: getCoreRowModel(),
   });
 
-
   const handleDelete = (id?: string) => {
-  if (id && confirm("Are you sure you want to delete this product?")) {
-    deleteProduct(id.toString());
-  }
-};
-
+    if (id && confirm("Are you sure you want to delete this product?")) {
+      deleteProduct(id.toString());
+    }
+  };
 
   const handleEdit = (product: Product) => {
     setSelectedProduct(product);

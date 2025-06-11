@@ -98,7 +98,6 @@ import ManufacturingDashboard from "./pages/dashboard/ManufacturingDashboard";
 import WorkstationTypes from "./pages/manufacturing/WorkstationTypes";
 import WorkstationsPage from "./pages/manufacturing/Workstations";
 import BillOfMaterials from "./pages/manufacturing/BOM";
-import ManufacturingItems from "./pages/manufacturing/ManufacturingItems";
 
 const queryClient = new QueryClient();
 
@@ -223,7 +222,6 @@ function App() {
                 />
                 <Route path="workstations" element={<WorkstationsPage />} />
                 <Route path="bom" element={<BillOfMaterials />} />
-                <Route path="items" element={<ManufacturingItems />} />
               </Route>
 
               <Route path="/calendar" element={<Calendar />} />

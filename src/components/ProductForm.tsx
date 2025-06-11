@@ -241,9 +241,7 @@ const ProductForm = ({ product, onClose }: ProductFormProps) => {
             Description
           </label>
           <textarea
-            {...register("description", {
-              required: "Description is required",
-            })}
+            {...register("description")}
             className="input"
             rows={3}
           />

@@ -37,6 +37,7 @@ import useMaintenanceLogStore from "../store/asset/maintainance/maintainance-log
 import useMaintenanceTeamStore from "../store/asset/maintainance/maintainance-team";
 import useWorkstationTypeStore from "../store/manufacturing/workstation-type";
 import useWorkstationStore from "../store/manufacturing/workstations";
+import useOperationStore from "../store/manufacturing/operations";
 
 const useInitialData = () => {
   // crm
@@ -102,6 +103,7 @@ const useInitialData = () => {
 
   const { fetchWorkstationTypes } = useWorkstationTypeStore();
   const { fetchWorkstations } = useWorkstationStore();
+  const { fetchOperations } = useOperationStore();
 
 
 
@@ -157,7 +159,8 @@ const useInitialData = () => {
 
 
         fetchWorkstationTypes(),
-        fetchWorkstations()
+        fetchWorkstations(),
+        fetchOperations()
       ]);
       setLoading(false);
     };

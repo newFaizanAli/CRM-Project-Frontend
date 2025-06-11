@@ -121,9 +121,7 @@ const CategoryForm = ({ category, onClose }: CategoryFormProps) => {
             Description
           </label>
           <textarea
-            {...register("description", {
-              required: "Description is required",
-            })}
+            {...register("description")}
             className="input"
             rows={3}
           />

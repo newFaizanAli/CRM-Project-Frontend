@@ -87,7 +87,7 @@ const Header = ({ setSidebarOpen }: HeaderProps) => {
               onClick={() => setDropdownOpen((prev) => !prev)}
               className="flex items-center space-x-2 rounded-full bg-gray-100 p-2 text-gray-600 hover:bg-gray-200"
             >
-              <div className="h-8 w-8 rounded-full bg-primary-600"></div>
+              <div className="h-8 w-8 rounded-full bg-primary-600">FA</div>
               <ChevronDownIcon className="h-4 w-4" />
             </button>
 

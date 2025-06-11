@@ -1061,10 +1061,45 @@ export interface Operation {
 }
 
 export type OperationFormData = Omit<Operation, "_id" | "workstation"> & {
-  workstation: string; 
+  workstation: string;
   type: string;
 };
 
 export type OperationFormWithId = OperationFormData & {
   _id: string;
 };
+
+// ----------- BOM --------------
+
+export interface BOM_Materials {
+  product: string; // Product _id
+  quantity: number;
+  rate: number;
+}
+
+export interface BOMOperations {
+  operation: string; // Product _id
+  timeInMinutes: number;
+  costPerHour: number;
+}
+
+export interface BOM {
+  _id?: string;
+  ID?: string;
+  rawMaterials: BOM_Materials[];
+  operations: BOMOperations[];
+  product: {
+    _id: string;
+    name: string;
+  };
+  totalCost: number;
+  isActive: boolean;
+  remarks?: string;
+}
+
+export type BOMFormData = Omit<
+  BOM,
+  "_id" | "createdAt" | "updatedAt"
+>;
+
+export type BOMFormWithId = BOMFormData & { _id: string };
